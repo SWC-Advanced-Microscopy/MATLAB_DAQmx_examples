@@ -19,8 +19,9 @@ This currently supports only a small subset of the NI VISA API.
 
 ### What is provided here
 This repository contains a bunch of NI DAQmx examples using both the MATLAB DAQ toolbox and the `dabs.ni.daqmx` wrapper. 
-The examples provided here overlap with those in `dabs.ni.daqmx.demos` but are more up to date and more extensively commented. 
+The examples provided here overlap with those provided by Vidrio in `dabs.ni.daqmx.demos`, but are more up to date and more extensively commented. 
 The `DAQmx_ANSI_C_examples` directory is for convenience and contains copies of some of the examples installed along with DAQmx.
+Some examples use more advanced MATLAB features, these are covered by example code in the `basicConcepts` directory. 
 
 
 ## Installation
@@ -65,10 +66,8 @@ If they do not:
 
 ### Further information 
 * [Using NI-DAQmx in Text Based Programming Environments](http://www.ni.com/tutorial/5409/en/)
-* [DAQmx C Reference help](http://zone.ni.com/reference/en-XX/help/370471AE-01/)
-* [DAQmx C functions](http://zone.ni.com/reference/en-XX/help/370471AE-01/TOC3.htm)
-* [Vidrio DAQmx docs](http://scanimage.vidriotechnologies.com/display/API/Hardware+Support+Package+%28dabs%29+-+ni+-+daqmx)
-* [Vidrio DAQmx demos](http://scanimage.vidriotechnologies.com/display/API/Hardware+Support+Package+%28dabs%29+-+ni+-+daqmx+-+demos)
+* [DAQmx C Reference help](http://zone.ni.com/reference/en-XX/help/370471AE-01/) and [C functions listing](http://zone.ni.com/reference/en-XX/help/370471AE-01/TOC3.htm)
+* Vidrio DAQmx [docs](http://scanimage.vidriotechnologies.com/display/API/Hardware+Support+Package+%28dabs%29+-+ni+-+daqmx) and [demos](http://scanimage.vidriotechnologies.com/display/API/Hardware+Support+Package+%28dabs%29+-+ni+-+daqmx+-+demos)
 
 
 ### DAQmx in other languages

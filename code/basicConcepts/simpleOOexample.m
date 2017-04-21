@@ -95,7 +95,7 @@ classdef simpleOOexample < handle
     % locally available to the simpleOOexample class. A "method" is the OO term for a 
     % function that is a member of an class. 
 
-Â
+
     methods %open methods block
 
         function obj=simpleOOexample
