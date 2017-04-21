@@ -9,7 +9,7 @@ function trappingErrors
     %
     %
     % More info:
-    % https://ch.mathworks.com/help/matlab/ref/try.html
+    % https://www.mathworks.com/help/matlab/ref/try.html
     %
     %
     % Rob Campbell - Basel 2017
@@ -20,20 +20,21 @@ function trappingErrors
 
     try
         %MATLAB always attempts to execute code in this "try" block
-
         for ii=1:5, disp(x(ii)), end %Loop through the vector and create an error
 
     catch ME
         %If code in the "try" block fails, the code in this "catch" block is run
         fprintf('\nERROR!\nThe following error happened:\n%s\n\n', ME.message)
-        %rethrow(ME)
+        %rethrow(ME) % If you uncomment this line, everything following it will not run, but the preceeding print statement does
+                     % More details at: https://www.mathworks.com/help/matlab/ref/rethrow.html
     end
 
-    %The error was trapped and so the following display line will run and print to screen
+    % The error was trapped by the catch block, which simply prints what went wrong to screen. 
+    % Thus, execution proceeds to here and the following line will run and print text to the command line.
     disp('code here still runs')
 
 
-    %However, this error will not be caught
+    %However, this error will not be caught, since it's not in a try/catch statement
     for ii=1:5, disp(x(ii)), end %Loop through the vector and create an error
 
     % So the following is never run

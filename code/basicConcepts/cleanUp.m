@@ -4,15 +4,20 @@ function cleanUp
     % function cleanUp
     %
     % Purpose
-    % Demo of how to run a sub-function when the caller function ends. 
-    % The "cleanUp" function will run even if the caller crashes.
+    % Demo of how to run a sub-function when the main function ends. 
+    % The use of try/catch statements means that the "cleanUp" function 
+    % will run even if the caller crashes.
     %
-    % 
-    % Inputs
-    % none
+    % Clean-up functions are not normally needed, since any variables present 
+    % in your function are automatically cleared when the function ends. However,
+    % clean-up functions are useful when you're doing things like hardware 
+    % control. Say your function is communicating with a nuclear-powered toaster 
+    % over a serial port. Since the device is dangerous, you want to ensure that
+    % it's put into a safe state before the function ends (even if it ends in a
+    % way that was predictable). Clean-up functions are just the ticket in this
+    % sort of scenario. You will see clean-up functions in all the Vidrio DAQmx
+    % examples in this repository. 
     %
-    % Outputs
-    % none
     %
     %
     %

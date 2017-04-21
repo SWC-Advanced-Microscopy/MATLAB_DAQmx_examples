@@ -10,6 +10,11 @@ function nestedFunctionExample
     % using "global"
     %
     %
+    % Instructions
+    % Run this function at the command line then read through the code and 
+    % satisfy yourself that you understand what was printed to screen. 
+    %
+    %
     % More info:
     % https://www.mathworks.com/help/matlab/matlab_prog/nested-functions.html
     %
