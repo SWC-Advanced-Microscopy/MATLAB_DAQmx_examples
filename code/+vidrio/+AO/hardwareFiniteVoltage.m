@@ -12,15 +12,14 @@ function hardwareFiniteVoltage
     % Demonstrated steps:
     %    1. Create a vector comprising a single cycle of a sinewave which will play at 1 Hz.
     %    2. Create a task.
-    %    3. Create an Analog Output Voltage channel.
-    %    4. Define the update rate for the voltage generation. Additionally, define 
+    %    3. Create an Analog Output voltage channel.
+    %    4. Define the update (sample) rate for the voltage generation. Additionally, define 
     %       the sample mode to be finite, and set the size of the output buffer to 
     %       be equal to the length of waveform we will be playing out.
     %    5  Write the waveform to the buffer. 
     %    6. Call the Start function and wait until generation is complete.
-    %    7. Continuously play the waveform until the user hits ctrl-c or an error occurs.
-    %    8. Clear the task
-    %    9. Display an error if any.
+    %    7. Clear the task
+    %    8. Display an error if any.
     %
     %
     % Rob Campbell - Basel, 2017
@@ -47,7 +46,7 @@ function hardwareFiniteVoltage
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
                                         % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
     sampleRate = 1000;                  % Sample Rate in Hz
-    
+
     % Build one cycle of a sine wave to play through the AO line (note the transpose)
     waveForm=sin(linspace(-pi,pi, sampleRate))';
     numSamplesPerChannel = length(waveForm) ;   % The number of samples to be stored in the buffer per channel
@@ -92,17 +91,15 @@ function hardwareFiniteVoltage
         % Start the task and wait until it is complete. Task starts right away since we
         % configured no triggers
         hTask.start
-        
+
         fprintf('Playing sine wave through AO %d...\n', physicalChannel)
         hTask.waitUntilTaskDone; % wait until all requested samples have been played acquired
 
-    catch err
-        cleanUpFunction
-        rethrow(err) %Display error
+    catch ME
+       fprintf('\nERRROR: %s\n\n',ME.message)
+       return
 
     end %try/catch
-
-
 
 
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

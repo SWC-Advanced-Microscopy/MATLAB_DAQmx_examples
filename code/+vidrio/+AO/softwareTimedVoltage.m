@@ -12,7 +12,7 @@ function softwareTimedVoltage
     % 
     % Demonstrated steps:
     %    1. Create a task.
-    %    2. Create an Analog Output Voltage channel.
+    %    2. Create an Analog Output voltage channel.
     %    3. Create a vector comprising a single cycle of a sinewave with 100 points
     %    4. Call the Start function.
     %    5. Write one data point from the vector at a time every 10 ms until the 
@@ -77,12 +77,11 @@ function softwareTimedVoltage
             end
         end
 
-    catch err
-        cleanUpFunction
-        rethrow(err) %Display error
+    catch ME
+       fprintf('\nERRROR: %s\n\n',ME.message)
+       return
 
     end %try/catch
-
 
 
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

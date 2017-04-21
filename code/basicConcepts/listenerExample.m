@@ -10,7 +10,9 @@ classdef listenerExample < handle
     %
     % Purpose
     % Shows how to set up a listener and a notifier in an object. These features
-    % are inherited from the abstract class handle. 
+    % are inherited from the abstract class handle. Listeners, notifiers, and 
+    % callback functions are very commonly used in DAQ tasks and GUI building.
+    %
     % 
     % To run this example:
     % >> L = listenerExample
@@ -18,22 +20,24 @@ classdef listenerExample < handle
     %
     %
     % Details:
-    % http://uk.mathworks.com/help/matlab/matlab_oop/learning-to-use-events-and-listeners.html
+    % http://www.mathworks.com/help/matlab/matlab_oop/learning-to-use-events-and-listeners.html
     %
     % Rob Campbell - Basel 2016
 
 
-    properties
-        exampleProperty %declare exampleProperty but don't populate it with anything
-    end %close properties
 
-    events
+    properties %open properties block
+        exampleProperty %declare exampleProperty but don't populate it with anything
+    end %close properties block
+
+
+    events %open event definition block
         %Declare a notifier. This will be hit each time the exampleProperty property is refreshed with new example data
         examplePropertyPopulated
-    end
+    end %close event definition block
 
 
-    methods
+    methods %open method definition block
 
         function obj=listenerExample
             obj.populateProperty %fill example property with random numbers
@@ -45,9 +49,6 @@ classdef listenerExample < handle
             % here, but I show the full form above. If you wanted to ignore them, you could do:
             % as part of the event. If we wanted to use those we would do:
             %   addlistener(obj,'examplePropertyPopulated', @(~,~) obj.plotIt); 
-
-
-
         end %close simpleOOexample constructor
 
 
@@ -65,6 +66,7 @@ classdef listenerExample < handle
             plot(obj.exampleProperty,'ok','MarkerFaceColor',[1,1,1]*0.5)
         end %close plotIt
 
-    end %close methods
+    end %close method definition block
+
 
 end %close simpleOOexample

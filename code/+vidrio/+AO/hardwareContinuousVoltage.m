@@ -18,7 +18,7 @@ function hardwareContinuousVoltage
     % Demonstrated steps:
     %    1. Create a vector comprising a single cycle of a sinewave which will play at 1 Hz.
     %    2. Create a task.
-    %    3. Create an Analog Output Voltage channel.
+    %    3. Create an Analog Output voltage channel.
     %    4. Define the update rate for the voltage generation. Additionally, define 
     %       the sample mode to be continuous, do not allow sample regeneration, and 
     %       set the size of the output buffer to be equal to the length of waveform we
@@ -123,12 +123,11 @@ function hardwareContinuousVoltage
             pause(0.5);
         end
 
-    catch err
-        cleanUpFunction
-        rethrow(err) %Display error
+    catch ME
+       fprintf('\nERRROR: %s\n\n',ME.message)
+       return
 
     end %try/catch
-
 
 
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

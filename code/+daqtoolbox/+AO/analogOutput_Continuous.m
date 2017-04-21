@@ -36,7 +36,8 @@ s.Rate = 2000;
 s.NotifyWhenScansQueuedBelow = round(length(waveform)*0.5); 
 
 
-%This listener tops up the output buffer
+% This listener tops up the output buffer with an anonymous function 
+% (see basicConcepts/anonymousFunctionExample.m)
 addlistener(s,'DataRequired', @(src,event) src.queueOutputData(waveform));
 
 s.IsContinuous = true; %needed to provide continuous behavior

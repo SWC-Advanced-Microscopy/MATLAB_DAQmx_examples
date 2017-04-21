@@ -20,7 +20,7 @@ function cleanUp
     %
     % see: http://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/
     %
-    % See also: windowCloseFunction
+    % See also: windowCloseFunction, nestedFunctionExample
 
 
 
@@ -37,11 +37,34 @@ function cleanUp
     end
 
 
-        %-----------------------------------------------
-        %The clean-up function is nested so it has access to the caller's namespace
-        function cleanUpFunction
-            fprintf('\n\nTidying up (there were %d dots printed to screen).\n\n',n)
-        end %cleanUpFunction
+    %NOTE: the cleanup function will also run on an error if you use a try/catch block
+    %      (see trappingErrors.m) like this:
+
+    %Option one:
+    try
+        %stuff  happens
+        x=1; %Doesn't generate an error
+    catch ME %See: https://www.mathworks.com/help/matlab/matlab_prog/capture-information-about-errors.html
+        %Like this the clean-up function is run (call it explicitly then rethrow)
+        cleanUpFunction
+        rethrow(ME) %https://www.mathworks.com/help/matlab/ref/rethrow.html
+    end
+
+    %Option two:
+    try
+        %stuff  happens
+        x=1; %Doesn't generate an error
+    catch ME %See: https://www.mathworks.com/help/matlab/matlab_prog/capture-information-about-errors.html
+        %Here we only show the message, so the clean-up function will run as normal
+        disp(ME.message) 
+    end
+
+
+    %-----------------------------------------------
+    %The clean-up function is nested so it has access to the caller's namespace
+    function cleanUpFunction
+        fprintf('\n\nTidying up (there were %d dots printed to screen).\n\n',n)
+    end %cleanUpFunction
 
 
 end %cleanUp

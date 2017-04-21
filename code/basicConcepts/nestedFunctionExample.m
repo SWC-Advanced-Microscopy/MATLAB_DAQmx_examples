@@ -4,14 +4,18 @@ function nestedFunctionExample
     % function nestedFunctionExample
     %
     % Purpose
-    % sub-functions nested within the main function share the same *scope*
+    % Sub-functions nested within the main function share the same *scope*
     % as the main function. "Scope" defines the region of code within which
     % a variable is visible. Nesting functions is a nice alternative to 
     % using "global"
     %
     %
-    % Rob Campbell - Basel 2016
+    % More info:
+    % https://www.mathworks.com/help/matlab/matlab_prog/nested-functions.html
     %
+    %
+    % Rob Campbell - Basel 2016
+
 
 
     myVariable =123;
@@ -30,7 +34,6 @@ function nestedFunctionExample
 
     % Run the non-nested function "myNonNestedFunction" and show that it has a different scope
     % to the main function body
-    % this propagates back to the main function body
     fprintf('\nRunning "myNonNestedFunction", which assigns a different value to myVariable\n')
     myNonNestedFunction(myVariable)
     fprintf('myVariable is STILL %d in the main function body\n\n',myVariable)
@@ -44,11 +47,11 @@ function nestedFunctionExample
         fprintf('myVariable is %d in the nested "myNestedFunction"\n',myVariable)
     end %close myNestedFunction
 
+
     function myNestedFunctionThatChangesStuff
         %This function is nested within the main function and so has access to "myVariable"
         myVariable = 456;
     end %close myNestedFunction
-
 
 
 end %close nestedFunctionExample
