@@ -27,8 +27,7 @@ The following examples show object-oriented programming. They demonstrate how a 
 is defined and used in MATLAB. Programming GUIs and DAQ tasks is often more natural using classes. 
 Before proceeding with these examples read this page: 
 https://www.mathworks.com/help/matlab/matlab_oop/why-use-object-oriented-design.html
-The goal of the following examples is simply to give you a flavor of what object-oriented programming
-is about. 
+The goal of the following examples is simply to give you an overview of what object-oriented programming is about. 
 
 simpleOOexample  -  How to build and work with a simple class
 listenerExample  -  Uses a notifier, listener, and a callback function to more elegantly perform 

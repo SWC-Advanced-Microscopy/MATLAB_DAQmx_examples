@@ -6,6 +6,9 @@ classdef listenerExample < handle
     % If you aren't familiar with OO, first look at simpleOOexample. 
     % Also, you should look at anonymousFunctionExample.m and windowCloseFunction.m
     % if you aren't familiar with anonymous functions and callback functions.
+    % You will probably need to read the documentation on listeners before this 
+    % class will make sense:
+    % http://www.mathworks.com/help/matlab/matlab_oop/learning-to-use-events-and-listeners.html
     %
     %
     % Purpose
@@ -19,8 +22,6 @@ classdef listenerExample < handle
     % >> L.populateProperty %refreshes the data and uses a listener/notifier to re-plot
     %
     %
-    % Details:
-    % http://www.mathworks.com/help/matlab/matlab_oop/learning-to-use-events-and-listeners.html
     %
     % Rob Campbell - Basel 2016
 
@@ -46,10 +47,9 @@ classdef listenerExample < handle
             addlistener(obj,'examplePropertyPopulated', @(src,eventData) obj.plotIt(src,eventData)); 
 
             % In the case above, we pass the source object and the event object. These aren't used for anything
-            % here, but I show the full form above. If you wanted to ignore them, you could do:
-            % as part of the event. If we wanted to use those we would do:
+            % here, but I show the full form above. If you wanted to ignore them, you could just do:
             %   addlistener(obj,'examplePropertyPopulated', @(~,~) obj.plotIt); 
-        end %close simpleOOexample constructor
+        end %close listenerExample constructor
 
 
         function populateProperty(obj)
@@ -69,4 +69,4 @@ classdef listenerExample < handle
     end %close method definition block
 
 
-end %close simpleOOexample
+end %close listenerExample
