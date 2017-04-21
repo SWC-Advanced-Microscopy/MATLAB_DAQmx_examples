@@ -1,22 +1,21 @@
-function hardwareContinuousVoltage
+function hardwareContinuousVoltageWithCallBack
     % A simple example showing hardware-timed continuous analog input using the Vidrio dabs.ni.daqmx wrapper
     %
-    % function vidrio.AI.hardwareContinuousVoltage
+    % function vidrio.AI.hardwareContinuousVoltageWithCallBack
     %
     % Purpose
     % Demonstrates how to do hardware-timed continuous analog input using Vidrio's dabs.ni.daqmx wrapper. 
     % This function continuously acquires data from multiple channels and plots the results to screen as
-    % the data come in. Plotting is achieved in a very simple way with repeated call to plot in a while loop.
-    % The example uses the card's on-board clock but uses no triggers. 
+    % the data come in. Plotting is achieved using a callback function. The example uses the card's on-board clock but uses no triggers. 
     %
     %
     % Demonstrated steps:
     %    1. Create a task.
     %    2. Create multiple Analog Input voltage channels.
     %    3. Set the sample rate, define the sample mode to be continuous.
-    %    4. Call the Start function.
-    %    5. Read in the data continuously in a while loop
-    %    6. Clear the task
+    %    4. Set up a figure that will stop the acquisition when closed then call the Start function.
+    %    5. Read in the data continuously using a callback function and plot to screen.
+    %    6. Clear the task.
     %    7. Display an error if any.
     %
     %
@@ -24,18 +23,12 @@ function hardwareContinuousVoltage
     %
     % 
     % Also see:
-    % Vidrio example: dabs.ni.daqmx.demos.AnalogInput.Voltage_Continuous_Input
-    % The following two examples are similar but use a callback function to plot the data
     % TMW DAQ Toolbox example: daqtoolbox.AI.analogInput_Continuous
     % ANSI C: DAQmx_ANSI_C_examples/AI/ContAcq-IntClk.c 
 
 
-
-    %Define a cleanup function
-    tidyUp = onCleanup(@cleanUpFunction);
-
     % Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
+    devName = 'scan';       % the name of the DAQ device as shown in MAX
     taskName = 'hardAI';    % A string that will provide a label for the task
     physicalChannels = 0:3; % A scalar or an array with the channel numbers
     minVoltage = -0.5;       % Channel input range minimum
@@ -71,31 +64,34 @@ function hardwareContinuousVoltage
         hTask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps', numSamplesPerChannel, sampleClockSource);
 
 
+        % * Call an anonymous function function to top up the buffer when half of the samples
+        %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
+        %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
+        hTask.registerEveryNSamplesEvent(@readAndPlotData, 500,1,'Scaled');
+
+
+        fig=clf;
+        fig.CloseRequestFcn=@windowCloseFcn;
         % Start the task and wait until it is complete. Task starts right away since we
         % configured no triggers
         hTask.start
 
 
-        fprintf('Recoding data on %s. Hit ctrl-C to stop.\n', devName);
-        clf 
-        while 1
-            % readAnalogData returns once 500 samples have been acquired or the 5 second timeout is reached
-            % More details at:  "help dabs.ni.daqmx.Task.readAnalogData"
-            data = hTask.readAnalogData(500,'scaled',5);
-            plot(data)
-            ylim([minVoltage,maxVoltage])
-            drawnow
-        end
+       fprintf('Recoding data on %s. Close window to stop.\n', devName);
+    
+
 
     catch ME
        fprintf('\nERRROR: %s\n\n',ME.message)
-       return
-
+       windowCloseFcn([])
     end %try/catch
 
 
+
+
+
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    function cleanUpFunction
+    function windowCloseFcn(~,~)
         %This runs when the function ends
         if exist('hTask','var')
             fprintf('Cleaning up DAQ task\n');
@@ -104,6 +100,30 @@ function hardwareContinuousVoltage
         else
             fprintf('No task variable present for clean up\n')
         end
-    end %close cleanUpFunction
+
+        if exist('fig','var') %In case this is called in the catch block
+            delete(fig)            
+        end
+    end %close windowCloseFcn
+
+
+
+    function readAndPlotData(src,evt)
+        hTask = src;
+        data = evt.data;
+
+        errorMessage = evt.errorMessage;
+        
+        % check for errors
+        if ~isempty(errorMessage)
+            delete(hTask);
+            error(errorMessage);
+        else
+            plot(data);
+        end
+
+    end %readAndPlotData
 
 end %close hardwareContinuousVoltage
+
+
