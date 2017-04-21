@@ -56,6 +56,7 @@ There are further comments in-line so open the example in an editor to learn mor
 * `vidrio.AO.hardwareContinuousVoltageNoRegen` - basic continuous analog output with the on-board clock that recycles the output buffer
 * `vidrio.AI.softwareTimedVoltage` - software-timed ("on demand") analog input
 * `vidrio.AI.hardwareFiniteVoltage` - hardware-timed analog input (using the on-board clock) of a fixed number of points
+* `vidrio.AI.hardwareContinuousVoltage` -  A simple example showing hardware-timed continuous analog input with no callback functions
 
 
 ### Hints

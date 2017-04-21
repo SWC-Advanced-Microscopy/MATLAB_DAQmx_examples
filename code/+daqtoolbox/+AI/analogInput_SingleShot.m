@@ -1,7 +1,7 @@
 function varargout = analogInput_SingleShot
 % Example showing how to record two seconds
 %
-% function data = analogInput_SingleShot
+% function data = daqtoolbox.AI.analogInput_SingleShot
 %
 % Purpose
 % Records two seconds of data and plots it to screen.
