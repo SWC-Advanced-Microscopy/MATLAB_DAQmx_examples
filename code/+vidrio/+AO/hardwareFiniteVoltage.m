@@ -34,7 +34,7 @@ function hardwareFiniteVoltage
     % Also see:
     % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Finite_Output
     % TMW DAQ Toolbox example: daqtoolbox.AO.analogOutput_Finite
-
+    % Restrictions on AO tasks: http://digital.ni.com/public.nsf/allkb/2C45C3DC484FF730862570E7007CCBD4?OpenDocument
 
 
     %Define a cleanup function

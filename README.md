@@ -38,6 +38,7 @@ Simulated mode also works in a virtual machine.
 By default all examples will run on NI DAQ device `Dev1`. 
 In each example this device ID is defined by a variable called `devName` near the start of the function. 
 You will therefore either need a DAQ device called `Dev1` or you will need to edit the code accordingly. 
+You can see which devices are connected in NI MAX or by running: `vidrio.listDeviceIDs` at the MATLAB command line. 
 For each example, first look at the help text (e.g. `help vidrio.AO.softwareTimedVoltage`) then run at the MATLAB command-line. e.g. 
 
 ```
@@ -59,6 +60,7 @@ There are further comments in-line so open the example in an editor to learn mor
 * `vidrio.AI.hardwareFiniteVoltage` - hardware-timed analog input (using the on-board clock) of a fixed number of points
 * `vidrio.AI.hardwareContinuousVoltage` -  A simple example showing hardware-timed continuous analog input with no callback functions
 * `vidrio.AI.hardwareContinuousVoltageWithCallBack` -  Hardware-timed continuous analog input with a callback function. Acq ends when figure is closed.
+* `vidrio.mixed.AOandAI` - continuous AI and AO that run simultaneously and in sync. 
 
 ### Hints
 The use of `try`/`catch` blocks should ensure the DAQmx tasks always shut down cleanly. 
@@ -76,4 +78,4 @@ If they do not:
 * [PyDAQmx](https://pythonhosted.org/PyDAQmx/index.html)
 * [Calling the DAQmx dll directly from Python and Perl](http://www.ni.com/white-paper/8911/en/)
 * For ANSI C examples look in `C:\Users\Public\Documents\National Instruments\NI-DAQ\Examples`
-
+* You can find side-by-side examples of how DAQmx works in different languages [here](http://www.ni.com/product-documentation/2835/en/).

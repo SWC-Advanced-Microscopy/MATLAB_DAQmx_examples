@@ -36,7 +36,7 @@ function hardwareContinuousVoltageNoRegen
     % TMW DAQ Toolbox example: *Is non-regenerative AO possible with TMW toolbox*?
     % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Continuous_Output
     % Same but with a digital trigger: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
-
+    % Restrictions on AO tasks: http://digital.ni.com/public.nsf/allkb/2C45C3DC484FF730862570E7007CCBD4?OpenDocument
 
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);

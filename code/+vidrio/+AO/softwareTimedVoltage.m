@@ -34,7 +34,7 @@ function softwareTimedVoltage
     % Vidrio example: dabs.ni.daqmx.demos.AnalogInput.Voltage_Software_Timed_Input 
     % PyDAQmx example: https://pythonhosted.org/PyDAQmx/examples/analog_output.html
     % ANSI C: DAQmx_ANSI_C_examples/AO/MultVoltUpdates-SWTimed.c
-
+    % Restrictions on AO tasks: http://digital.ni.com/public.nsf/allkb/2C45C3DC484FF730862570E7007CCBD4?OpenDocument
 
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);

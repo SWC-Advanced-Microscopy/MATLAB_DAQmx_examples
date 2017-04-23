@@ -43,7 +43,9 @@ function hardwareContinuousVoltageNoRegen_DigTrig
     % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Continuous_Output
     % ANSI C: DAQmx_ANSI_C_examples/ContGen-ExtClk-DigStart.c
     % vidrio.AO.hardwareContinuousVoltageNoRegen
+    % Restrictions on AO tasks: http://digital.ni.com/public.nsf/allkb/2C45C3DC484FF730862570E7007CCBD4?OpenDocument
 
+    
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);
 

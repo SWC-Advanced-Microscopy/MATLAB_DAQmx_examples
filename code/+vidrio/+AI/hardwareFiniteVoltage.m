@@ -84,6 +84,8 @@ function hardwareFiniteVoltage
         hTask.waitUntilTaskDone;  % wait till all requested samples are acquired
         fprintf('\n')
 
+        % "Scaled" sets the input to be represented as a voltage value. 
+        % "Native" would have it be a raw integer (e.g. 16 bit number if this is a 16 bit DAQ)
         data = hTask.readAnalogData([],'scaled',0); % read all available data 
 
     catch ME
