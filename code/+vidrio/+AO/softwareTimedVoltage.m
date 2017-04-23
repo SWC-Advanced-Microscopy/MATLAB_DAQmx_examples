@@ -23,7 +23,8 @@ function softwareTimedVoltage
     %
     % Monitoring the output
     % If you lack an oscilloscope you may physically connect the analog output to 
-    % an analog input and monitor this using the NI MAX test panel. 
+    % an analog input and monitor this using the NI MAX test panel. You likely will need
+    % to select RSE: http://www.ni.com/white-paper/3344/en/
     % 
     %
     % Rob Campbell - Basel, 2017
@@ -62,7 +63,7 @@ function softwareTimedVoltage
         hTask.createAOVoltageChan(devName, physicalChannel, [], minVoltage, maxVoltage);
 
         sineWave = sin(linspace(-pi,pi, 100));
-        fprintf('Playing sine wave out of %s AI %d. Hit ctrl-C to stop.\n', devName, physicalChannel);
+        fprintf('Playing sine wave out of %s AO %d. Hit ctrl-C to stop.\n', devName, physicalChannel);
 
         % Output continues for as long as the following while loop runs
         n=1;
@@ -78,7 +79,7 @@ function softwareTimedVoltage
         end
 
     catch ME
-       fprintf('\nERRROR: %s\n\n',ME.message)
+       daqDemosHelpers.errorDisplay(ME)
        return
 
     end %try/catch

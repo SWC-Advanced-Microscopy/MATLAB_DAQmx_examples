@@ -12,7 +12,8 @@ function hardwareContinuousVoltage
     %
     % Monitoring the output
     % If you lack an oscilloscope you may physically connect the analog output to 
-    % an analog input and monitor this using the NI MAX test panel. 
+    % an analog input and monitor this using the NI MAX test panel. You likely will need
+    % to select RSE: http://www.ni.com/white-paper/3344/en/
     % 
     %
     % Demonstrated steps:
@@ -116,7 +117,7 @@ function hardwareContinuousVoltage
         hTask.start
 
 
-        fprintf('Playing sine wave out of %s AI %d. Hit ctrl-C to stop.\n', devName, physicalChannel);
+        fprintf('Playing sine wave out of %s AO %d. Hit ctrl-C to stop.\n', devName, physicalChannel);
         % Output continues for as long as the following while loop runs
         while 1
             hTask.isTaskDone; % Checks for errors
@@ -124,7 +125,7 @@ function hardwareContinuousVoltage
         end
 
     catch ME
-       fprintf('\nERRROR: %s\n\n',ME.message)
+       daqDemosHelpers.errorDisplay(ME)
        return
 
     end %try/catch

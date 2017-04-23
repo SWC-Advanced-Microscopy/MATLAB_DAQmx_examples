@@ -31,5 +31,5 @@ The goal of the following examples is simply to give you an overview of what obj
 
 simpleOOexample  -  How to build and work with a simple class
 listenerExample  -  Uses a notifier, listener, and a callback function to more elegantly perform 
-                    the operations intorudced in simpleOOexample.
+                    the operations introduced in simpleOOexample.
 

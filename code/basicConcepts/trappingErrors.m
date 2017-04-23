@@ -6,14 +6,16 @@ function trappingErrors
     % Purpose
     % Sometimes you want to ensure that a block of codes fails gracefully in
     % the event of an error. You can achieve this with a try/catch statement.
-    %
+    % You will see this throughout the Vidrio DAQmx examples to ensure created
+    % DAQ tasks shut down gracefully in the event of an error. 
+    % 
     %
     % More info:
     % https://www.mathworks.com/help/matlab/ref/try.html
     %
     %
     % Rob Campbell - Basel 2017
-
+    
 
     %Define a short vector
     x = [1,2,3,4];

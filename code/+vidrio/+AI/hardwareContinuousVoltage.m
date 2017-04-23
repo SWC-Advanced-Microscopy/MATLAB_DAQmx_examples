@@ -88,7 +88,7 @@ function hardwareContinuousVoltage
         end
 
     catch ME
-       fprintf('\nERRROR: %s\n\n',ME.message)
+       daqDemosHelpers.errorDisplay(ME)
        return
 
     end %try/catch

@@ -22,6 +22,12 @@ function hardwareFiniteVoltage
     %    8. Display an error if any.
     %
     %
+    % Monitoring the output
+    % If you lack an oscilloscope you may physically connect the analog output to 
+    % an analog input and monitor this using the NI MAX test panel. You likely will need
+    % to select RSE: http://www.ni.com/white-paper/3344/en/
+    %
+    %
     % Rob Campbell - Basel, 2017
     %
     % 
@@ -96,7 +102,7 @@ function hardwareFiniteVoltage
         hTask.waitUntilTaskDone; % wait until all requested samples have been played acquired
 
     catch ME
-       fprintf('\nERRROR: %s\n\n',ME.message)
+       daqDemosHelpers.errorDisplay(ME)
        return
 
     end %try/catch

@@ -64,14 +64,17 @@ function hardwareContinuousVoltageWithCallBack
         hTask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps', numSamplesPerChannel, sampleClockSource);
 
 
-        % * Call an anonymous function function to top up the buffer when half of the samples
-        %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
+        % * Set up a callback function to regularly read the buffer and plot the data.
         %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
-        hTask.registerEveryNSamplesEvent(@readAndPlotData, 500,1,'Scaled');
+        hTask.registerEveryNSamplesEvent(@readAndPlotData, 500, 1, 'Scaled');
 
 
+        % Open a figure window and have it shut off the acquisition when closed
+        % See: basicConcepts/windowCloseFunction.m
         fig=clf;
         fig.CloseRequestFcn=@windowCloseFcn;
+
+
         % Start the task and wait until it is complete. Task starts right away since we
         % configured no triggers
         hTask.start
@@ -82,8 +85,8 @@ function hardwareContinuousVoltageWithCallBack
 
 
     catch ME
-       fprintf('\nERRROR: %s\n\n',ME.message)
-       windowCloseFcn([])
+       daqDemosHelpers.errorDisplay(ME)
+       windowCloseFcn([]) %Closes any open figure windows and disconnects from the DAQ
     end %try/catch
 
 
@@ -92,7 +95,7 @@ function hardwareContinuousVoltageWithCallBack
 
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     function windowCloseFcn(~,~)
-        %This runs when the function ends
+        %This runs when the user closes the figure window or if there is an error
         if exist('hTask','var')
             fprintf('Cleaning up DAQ task\n');
             hTask.stop;    % Calls DAQmxStopTask
@@ -119,7 +122,11 @@ function hardwareContinuousVoltageWithCallBack
             delete(hTask);
             error(errorMessage);
         else
-            plot(data);
+            if isempty(data)
+                fprintf('Input buffer is empty\n' );
+            else
+                plot(data)
+            end
         end
 
     end %readAndPlotData

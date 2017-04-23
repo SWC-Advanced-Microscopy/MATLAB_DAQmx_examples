@@ -87,7 +87,7 @@ function hardwareFiniteVoltage
         data = hTask.readAnalogData([],'scaled',0); % read all available data 
 
     catch ME
-       fprintf('\nERRROR: %s\n\n',ME.message)
+       daqDemosHelpers.errorDisplay(ME)
        return
 
     end %try/catch
