@@ -1,19 +1,25 @@
-function hardwareContinuousVoltageNoRegen
+function hardwareContinuousVoltageNoRegen_DigTrig
     % Example showing hardware-timed continuous analog output without regeneration using the Vidrio dabs.ni.daqmx wrapper
     %
-    % function vidrio.AO.hardwareContinuousVoltageNoRegen
+    % function vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
     %
     % Purpose
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
-    % internal (on-board) sample clock. The example uses no triggers. The waveform is not regenerated 
+    % internal (on-board) sample clock. The example uses a digital trigger. The waveform is not regenerated 
     % continuously, so no callback to fill the buffer is needed. 
+    %
+    %
+    % Usage
+    % You can initiate the waveform output by connecting a hookup wire to PFI1 and touching 
+    % this to the +5 V line
     %
     %
     % Monitoring the output
     % If you lack an oscilloscope you may physically connect the analog output to 
     % an analog input and monitor this using the NI MAX test panel. You likely will need
     % to select RSE: http://www.ni.com/white-paper/3344/en/
+    % 
     %
     % Demonstrated steps:
     %    1. Create a vector comprising a single cycle of a sinewave which will play at 1 Hz.
@@ -23,20 +29,20 @@ function hardwareContinuousVoltageNoRegen
     %       the sample mode to be continuous and set the size of the output buffer to be equal 
     %       to the length of waveform we will be playing out.
     %    5  Write the waveform to the buffer. 
-    %    6. Call the Start function.
-    %    7. Continuously play the waveform until the user hits ctrl-c or an error occurs.
-    %    8. Clear the task
-    %    9. Display an error if any.
+    %    6. Define the digital trigger
+    %    7. Call the Start function.
+    %    8. Continuously play the waveform until the user hits ctrl-c or an error occurs.
+    %    9. Clear the task
+    %    10. Display an error if any.
     %
     %
     % Rob Campbell - Basel, 2017
     %
     % 
     % Also see:
-    % TMW DAQ Toolbox example: *Is non-regenerative AO possible with TMW toolbox*?
     % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Continuous_Output
-    % Same but with a digital trigger: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
-
+    % ANSI C: DAQmx_ANSI_C_examples/ContGen-ExtClk-DigStart.c
+    % vidrio.AO.hardwareContinuousVoltageNoRegen
 
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);
@@ -48,6 +54,14 @@ function hardwareContinuousVoltageNoRegen
     minVoltage = -10;       % Channel input range minimum
     maxVoltage = 10;        % Channel input range maximum
 
+
+    % Parameters for digital triggering
+    % We will use a PFI (Programmable Function Interface) line as the trigger source
+    % You can not conduct buffered acquisition on a PFI line but you can have changes on these lines instantly fire an event
+    % The properties of the PFI lines vary between devices series:
+    % http://digital.ni.com/public.nsf/allkb/8058F1BEF0944D99862574A3007EB53C
+    dTriggerSource = 'PFI1';           % the terminal used for the digital trigger; refer to "Terminal Names" in the DAQmx help for valid values
+    dTriggerEdge = 'DAQmx_Val_Rising'; % one of {'DAQmx_Val_Rising', 'DAQmx_Val_Falling'}
 
     % Task configuration
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
@@ -100,12 +114,19 @@ function hardwareContinuousVoltageNoRegen
         hTask.writeAnalogData(waveform, 5)
 
 
+        % * Configure the digital edge start trigger
+        %   More details at: "help dabs.ni.daqmx.Task.cfgDigEdgeStartTrig"
+        %   DAQmxCfgDigEdgeStartTrig
+        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgdigedgestarttrig/
+        hTask.cfgDigEdgeStartTrig(dTriggerSource,dTriggerEdge);
+
+
         % Start the task and wait until it is complete. Task starts right away since we
         % configured no triggers
         hTask.start
 
 
-        fprintf('Playing sine wave out of %s AO %d. Hit ctrl-C to stop.\n', devName, physicalChannel);
+        fprintf('Sine wave will play out of %s AO %d when a trigger is received on PFI1. Hit ctrl-C to stop.\n', devName, physicalChannel);
         % Output continues for as long as the following while loop runs
         while 1
             hTask.isTaskDone; % Checks for errors
