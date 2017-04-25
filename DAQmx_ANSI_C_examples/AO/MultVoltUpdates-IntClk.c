@@ -70,51 +70,51 @@
 
 int main(void)
 {
-	int         error=0;
-	TaskHandle  taskHandle=0;
-	float64     data[4000];
-	char        errBuff[2048]={'\0'};
-	int			i=0;
-	int32   	written;
+    int         error=0;
+    TaskHandle  taskHandle=0;
+    float64     data[4000];
+    char        errBuff[2048]={'\0'};
+    int         i=0;
+    int32       written;
 
-	for(;i<4000;i++)
-		data[i] = 5.0*(double)i/4000.0;
+    for(;i<4000;i++)
+        data[i] = 5.0*(double)i/4000.0;
 
-	/*********************************************/
-	// DAQmx Configure Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxCreateTask("",&taskHandle));
-	DAQmxErrChk (DAQmxCreateAOVoltageChan(taskHandle,"Dev1/ao0","",-10.0,10.0,DAQmx_Val_Volts,NULL));
-	DAQmxErrChk (DAQmxCfgSampClkTiming(taskHandle,"",1000.0,DAQmx_Val_Rising,DAQmx_Val_FiniteSamps,4000));
+    /*********************************************/
+    // DAQmx Configure Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxCreateTask("",&taskHandle));
+    DAQmxErrChk (DAQmxCreateAOVoltageChan(taskHandle,"Dev1/ao0","",-10.0,10.0,DAQmx_Val_Volts,NULL));
+    DAQmxErrChk (DAQmxCfgSampClkTiming(taskHandle,"",1000.0,DAQmx_Val_Rising,DAQmx_Val_FiniteSamps,4000));
 
-	/*********************************************/
-	// DAQmx Write Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxWriteAnalogF64(taskHandle,4000,0,10.0,DAQmx_Val_GroupByChannel,data,&written,NULL));
+    /*********************************************/
+    // DAQmx Write Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxWriteAnalogF64(taskHandle,4000,0,10.0,DAQmx_Val_GroupByChannel,data,&written,NULL));
 
-	/*********************************************/
-	// DAQmx Start Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxStartTask(taskHandle));
+    /*********************************************/
+    // DAQmx Start Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxStartTask(taskHandle));
 
-	/*********************************************/
-	// DAQmx Wait Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxWaitUntilTaskDone(taskHandle,10.0));
+    /*********************************************/
+    // DAQmx Wait Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxWaitUntilTaskDone(taskHandle,10.0));
 
 Error:
-	if( DAQmxFailed(error) )
-		DAQmxGetExtendedErrorInfo(errBuff,2048);
-	if( taskHandle!=0 ) {
-		/*********************************************/
-		// DAQmx Stop Code
-		/*********************************************/
-		DAQmxStopTask(taskHandle);
-		DAQmxClearTask(taskHandle);
-	}
-	if( DAQmxFailed(error) )
-		printf("DAQmx Error: %s\n",errBuff);
-	printf("End of program, press Enter key to quit\n");
-	getchar();
-	return 0;
+    if( DAQmxFailed(error) )
+        DAQmxGetExtendedErrorInfo(errBuff,2048);
+    if( taskHandle!=0 ) {
+        /*********************************************/
+        // DAQmx Stop Code
+        /*********************************************/
+        DAQmxStopTask(taskHandle);
+        DAQmxClearTask(taskHandle);
+    }
+    if( DAQmxFailed(error) )
+        printf("DAQmx Error: %s\n",errBuff);
+    printf("End of program, press Enter key to quit\n");
+    getchar();
+    return 0;
 }

@@ -100,8 +100,8 @@ function hardwareContinuousVoltageNoRegen
         hTask.writeAnalogData(waveform, 5)
 
 
-        % Start the task and wait until it is complete. Task starts right away since we
-        % configured no triggers
+        % Start the task and wait until it is complete. Task starts right away
+        % since we configured no triggers
         hTask.start
 
 

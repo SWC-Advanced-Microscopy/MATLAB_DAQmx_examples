@@ -10,8 +10,8 @@ function softwareBasic
     %
     %
     % Demonstrated steps:
-    %    1. Create two tasks.
-    %    2. Create one DO channel on each task. The first has one line and the second has two lines.
+    %    1. Create three tasks.
+    %    2. Create DO channels in three different ways to show all the available options.
     %    3. Write digital values on at a time to these lines. 
     %    4. Clear the task
     %    5. Display an error if any.
@@ -36,14 +36,21 @@ function softwareBasic
         hDO = dabs.ni.daqmx.Task.empty();
         hDO(1) = dabs.ni.daqmx.Task('DOtask_single');
         hDO(2) = dabs.ni.daqmx.Task('DOtask_multi');
-
+        hDO(3) = dabs.ni.daqmx.Task('DOtask_port');
 
         % * Define digital output channels on these tasks
         %   More details at: "help dabs.ni.daqmx.Task.createDOChan"
         %   C equivalent - DAQmxCreateDOChan
         %   http://zone.ni.com/reference/en-XX/help/370471AC-01/daqmxcfunc/daqmxcreatedochan/
         hDO(1).createDOChan(devName,'port0/line0'); %Open one digital line
-        hDO(2).createDOChan(devName,'port0/line1:2'); %Open multiple digital lines
+
+        % We will be able  to address these two lines with a row vector, where 
+        % each column in the vector corresponds to a different physical channel. 
+        hDO(2).createDOChan(devName,'port0/line1'); %Open multiple digital lines
+        hDO(2).createDOChan(devName,'port0/line2'); %Open multiple digital lines
+
+        % We now create three physical lines under the same logical channel.
+        hDO(3).createDOChan(devName,'port0/line3:5');
 
 
         % * Write to the DO lines
@@ -51,20 +58,31 @@ function softwareBasic
         %   This is a wrapper for the DAQmx digital write functions of which 
         %   there are five in total: http://zone.ni.com/reference/en-XX/help/370471AC-01/TOC22.htm
 
-        % Set all lines on task DOtask_multi high:
-        hDO(2).writeDigitalData([1;1]); %Note this is a column vector
-        pause(1)
-
-        % Then switch them low one at a time:
-        hDO(2).writeDigitalData([0;1]);
-        pause(0.5)
-        hDO(2).writeDigitalData([0;0]);
-
 
         % Set only port0/line0 on DOtask_single high then flip it back down
         hDO(1).writeDigitalData(1);
         pause(1)    
         hDO(1).writeDigitalData(0);
+
+
+        % Set all lines on task DOtask_multi high:
+        hDO(2).writeDigitalData([1,1]);
+        pause(1)
+
+        % Then switch them low one at a time:
+        hDO(2).writeDigitalData([0,1]); %Note this is a row vector
+        pause(0.5)
+        hDO(2).writeDigitalData([0,0]);
+
+
+        % Set the middle line (P0/L4) high
+        % Unlike the previous task we here use a row vector. This is because
+        % we are writing all samples to a single logical channel. In hDO(2)
+        % it was two logical channels. 
+        % NOTE: it's also possible to supply this input as binary notation, but this appears to require a running taskk
+        hDO(3).writeDigitalData([0;1;0]);
+        pause(1)
+        hDO(3).writeDigitalData([0;0;0] );
 
 
     catch ME

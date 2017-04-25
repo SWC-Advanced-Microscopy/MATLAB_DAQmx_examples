@@ -42,40 +42,40 @@
 
 int main(void)
 {
-	int32       error=0;
-	TaskHandle  taskHandle=0;
-	uInt8       data[8]={0,1,0,1,1,1,1,1};
-	char        errBuff[2048]={'\0'};
+    int32       error=0;
+    TaskHandle  taskHandle=0;
+    uInt8       data[8]={0,1,0,1,1,1,1,1};
+    char        errBuff[2048]={'\0'};
 
-	/*********************************************/
-	// DAQmx Configure Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxCreateTask("",&taskHandle));
-	DAQmxErrChk (DAQmxCreateDOChan(taskHandle,"Dev1/port0/line0:7","",DAQmx_Val_ChanForAllLines));
+    /*********************************************/
+    // DAQmx Configure Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxCreateTask("",&taskHandle));
+    DAQmxErrChk (DAQmxCreateDOChan(taskHandle,"Dev1/port0/line0:7","",DAQmx_Val_ChanForAllLines));
 
-	/*********************************************/
-	// DAQmx Start Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxStartTask(taskHandle));
+    /*********************************************/
+    // DAQmx Start Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxStartTask(taskHandle));
 
-	/*********************************************/
-	// DAQmx Write Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxWriteDigitalLines(taskHandle,1,1,10.0,DAQmx_Val_GroupByChannel,data,NULL,NULL));
+    /*********************************************/
+    // DAQmx Write Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxWriteDigitalLines(taskHandle,1,1,10.0,DAQmx_Val_GroupByChannel,data,NULL,NULL));
 
 Error:
-	if( DAQmxFailed(error) )
-		DAQmxGetExtendedErrorInfo(errBuff,2048);
-	if( taskHandle!=0 ) {
-		/*********************************************/
-		// DAQmx Stop Code
-		/*********************************************/
-		DAQmxStopTask(taskHandle);
-		DAQmxClearTask(taskHandle);
-	}
-	if( DAQmxFailed(error) )
-		printf("DAQmx Error: %s\n",errBuff);
-	printf("End of program, press Enter key to quit\n");
-	getchar();
-	return 0;
+    if( DAQmxFailed(error) )
+        DAQmxGetExtendedErrorInfo(errBuff,2048);
+    if( taskHandle!=0 ) {
+        /*********************************************/
+        // DAQmx Stop Code
+        /*********************************************/
+        DAQmxStopTask(taskHandle);
+        DAQmxClearTask(taskHandle);
+    }
+    if( DAQmxFailed(error) )
+        printf("DAQmx Error: %s\n",errBuff);
+    printf("End of program, press Enter key to quit\n");
+    getchar();
+    return 0;
 }

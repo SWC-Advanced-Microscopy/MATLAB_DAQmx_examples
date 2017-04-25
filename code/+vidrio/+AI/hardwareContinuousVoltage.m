@@ -28,7 +28,7 @@ function hardwareContinuousVoltage
     % The following two examples are similar but use a callback function to plot the data
     % TMW DAQ Toolbox example: daqtoolbox.AI.analogInput_Continuous
     % ANSI C: DAQmx_ANSI_C_examples/AI/ContAcq-IntClk.c 
-
+    % PyDAQmx: https://pythonhosted.org/PyDAQmx/callback.html
 
 
     %Define a cleanup function

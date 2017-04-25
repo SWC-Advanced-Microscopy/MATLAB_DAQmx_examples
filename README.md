@@ -62,7 +62,7 @@ There are further comments in-line so open the example in an editor to learn mor
 * `vidrio.AI.hardwareContinuousVoltageWithCallBack` -  Hardware-timed continuous analog input with a callback function. Acq ends when figure is closed.
 * `vidrio.mixed.AOandAI` - continuous AI and AO that run simultaneously and in sync. 
 * `vidrio.DO.softwareBasic` - simple on-demand digital output
-
+* `vidrio.CO.singlePulse` - create a single digital pulse using a counter task
 
 ### Hints
 The use of `try`/`catch` blocks should ensure the DAQmx tasks always shut down cleanly. 

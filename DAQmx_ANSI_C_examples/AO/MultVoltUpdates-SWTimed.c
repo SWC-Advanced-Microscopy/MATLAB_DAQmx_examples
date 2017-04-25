@@ -64,64 +64,64 @@
 
 #define DAQmxErrChk(functionCall) if( DAQmxFailed(error=(functionCall)) ) goto Error; else
 
-#define PI	3.1415926535
+#define PI  3.1415926535
 
 
 int main(void)
 {
-	int         error=0;
-	TaskHandle  taskHandle=0;
-	float64     data[1000];
-	char        errBuff[2048]={'\0'};
-	uInt32      i=0;
+    int         error=0;
+    TaskHandle  taskHandle=0;
+    float64     data[1000];
+    char        errBuff[2048]={'\0'};
+    uInt32      i=0;
 
-	for(;i<1000;i++)
-		data[i] = 9.95*sin((double)i*2.0*PI/1000.0);
-	i = 0;
+    for(;i<1000;i++)
+        data[i] = 9.95*sin((double)i*2.0*PI/1000.0);
+    i = 0;
 
-	/*********************************************/
-	// DAQmx Configure Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxCreateTask("",&taskHandle));
-	DAQmxErrChk (DAQmxCreateAOVoltageChan(taskHandle,"Dev1/ao0","",-10.0,10.0,DAQmx_Val_Volts,NULL));
+    /*********************************************/
+    // DAQmx Configure Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxCreateTask("",&taskHandle));
+    DAQmxErrChk (DAQmxCreateAOVoltageChan(taskHandle,"Dev1/ao0","",-10.0,10.0,DAQmx_Val_Volts,NULL));
 
-	/*********************************************/
-	// DAQmx Start Code
-	/*********************************************/
-	DAQmxErrChk (DAQmxStartTask(taskHandle));
+    /*********************************************/
+    // DAQmx Start Code
+    /*********************************************/
+    DAQmxErrChk (DAQmxStartTask(taskHandle));
 
-	printf("Generating samples continuously. Press Ctrl+C to interrupt\n");
-	while( 1 ) {
-		#if defined(WIN32) || defined(_WIN32)
-			Sleep(1);
-		#elif defined(__APPLE__) || defined(__linux__)
-			struct timespec ts = {1, 0};
-			nanosleep(&ts, 0);
-		#else
-			#error - This example requires a platform specific sleep call.
-		#endif
+    printf("Generating samples continuously. Press Ctrl+C to interrupt\n");
+    while( 1 ) {
+        #if defined(WIN32) || defined(_WIN32)
+            Sleep(1);
+        #elif defined(__APPLE__) || defined(__linux__)
+            struct timespec ts = {1, 0};
+            nanosleep(&ts, 0);
+        #else
+            #error - This example requires a platform specific sleep call.
+        #endif
 
-		/*********************************************/
-		// DAQmx Write Code
-		/*********************************************/
-		DAQmxErrChk (DAQmxWriteAnalogScalarF64(taskHandle,1,10.0,data[i],NULL));
-		if( ++i>=1000 )
-			i = 0;
-	}
+        /*********************************************/
+        // DAQmx Write Code
+        /*********************************************/
+        DAQmxErrChk (DAQmxWriteAnalogScalarF64(taskHandle,1,10.0,data[i],NULL));
+        if( ++i>=1000 )
+            i = 0;
+    }
 
 Error:
-	if( DAQmxFailed(error) )
-		DAQmxGetExtendedErrorInfo(errBuff,2048);
-	if( taskHandle!=0 ) {
-		/*********************************************/
-		// DAQmx Stop Code
-		/*********************************************/
-		DAQmxStopTask(taskHandle);
-		DAQmxClearTask(taskHandle);
-	}
-	if( DAQmxFailed(error) )
-		printf("DAQmx Error: %s\n",errBuff);
-	printf("End of program, press Enter key to quit\n");
-	getchar();
-	return 0;
+    if( DAQmxFailed(error) )
+        DAQmxGetExtendedErrorInfo(errBuff,2048);
+    if( taskHandle!=0 ) {
+        /*********************************************/
+        // DAQmx Stop Code
+        /*********************************************/
+        DAQmxStopTask(taskHandle);
+        DAQmxClearTask(taskHandle);
+    }
+    if( DAQmxFailed(error) )
+        printf("DAQmx Error: %s\n",errBuff);
+    printf("End of program, press Enter key to quit\n");
+    getchar();
+    return 0;
 }
