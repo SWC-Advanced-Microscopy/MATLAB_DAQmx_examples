@@ -20,7 +20,6 @@ function cleanUp
     %
     %
     %
-    %
     % Rob Campbell - Basel 2016
     %
     % see: http://blogs.mathworks.com/loren/2008/03/10/keeping-things-tidy/

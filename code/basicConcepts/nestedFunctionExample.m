@@ -4,10 +4,19 @@ function nestedFunctionExample
     % function nestedFunctionExample
     %
     % Purpose
-    % Sub-functions nested within the main function share the same *scope*
-    % as the main function. "Scope" defines the region of code within which
-    % a variable is visible. Nesting functions is a nice alternative to 
-    % using "global"
+    % You can use sub-functions to avoid repeating the same lines of code
+    % several times. There are two types of sub-function:
+    % a) Those "nested" within the main function that share the same *scope*
+    %    as the main function. "Scope" defines the region of code within which
+    %    a variable is visible. Nesting functions is a nice alternative to 
+    %    using "global"
+    % b) Those that are not nested within the main function and do not share
+    %    the same scope. 
+    % Both types of sub-function are only accesible by the main function.
+    %
+    % In this case, "nestedFunctionExample" is the main function and it contains
+    % two nested functions and one non-nested function. 
+    %
     %
     %
     % Instructions
@@ -23,11 +32,15 @@ function nestedFunctionExample
 
 
 
+    
     myVariable =123;
 
     fprintf('\nmyVariable is %d in the main function body\n',myVariable)
 
-    myNestedFunction %Note no input arguments
+
+    % Call a function nested within the main function. This function has no input
+    % arguments and is defined below. 
+    myNestedFunction 
 
 
     % Run a different nested function that changes the value of myVariable and show that 
@@ -45,6 +58,8 @@ function nestedFunctionExample
 
 
 
+
+
     %--------------------------------------------------------------------------------------
     % nested sub-functions follow
     function myNestedFunction
@@ -57,6 +72,7 @@ function nestedFunctionExample
         %This function is nested within the main function and so has access to "myVariable"
         myVariable = 456;
     end %close myNestedFunction
+    %--------------------------------------------------------------------------------------
 
 
 end %close nestedFunctionExample
@@ -70,3 +86,4 @@ function myNonNestedFunction(myVariable)
     myVariable=myVariable+9999;
     fprintf('myVariable is %d in the non-nested "myNonNestedFunction"\n',myVariable)
 end
+%--------------------------------------------------------------------------------------

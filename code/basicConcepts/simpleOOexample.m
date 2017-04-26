@@ -110,7 +110,6 @@ classdef simpleOOexample < handle
 
 
         function populateExamplePropertyWithData(obj)
-
             obj.exampleProperty = randn(1,60);
             obj.exampleProperty(20:40) = obj.exampleProperty(40:60)*10;
         end %close populateExamplePropertyWithData method
