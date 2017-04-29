@@ -40,7 +40,7 @@ function AOandAI
     % Also see:
     % ANSI C: DAQmx_ANSI_C_examples/SynchAI-AO.c
     % Basic AO digital triggering: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
-
+    % AO and AI with a class rather than a functio: vidrio.mixed.AOandAI_OO
 
     AIDevice = 'Dev1';
     AIChans = 0; 
@@ -74,44 +74,41 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan" and "help dabs.ni.daqmx.Task.createAIVoltageChan"
         %   C equivalent - DAQmxCreateAOVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
-        hAITask.createAIVoltageChan(AIDevice,AIChans,[], minVoltage, maxVoltage,[],[],AIterminalConfig);
-        hAOTask.createAOVoltageChan(AODevice,AOChan);
+        hAITask.createAIVoltageChan(AIDevice, AIChans, [], minVoltage, maxVoltage, [], [], AIterminalConfig);
+        hAOTask.createAOVoltageChan(AODevice, AOChan);
 
 
         %--------------------------------------------------------------------------------
         % SET UP THE AI TASK
-        updatePeriodSamples = round(updatePeriod * sampleRate); %Every how many samples to take a reading
-        numUpdates = round(round(sampleRate*acqPeriod)/updatePeriodSamples);
-        acqNumSamples = numUpdates * updatePeriodSamples;
 
-        % * Configure the sampling rate and the number of samples
+        % * Configure the sampling rate and the buffer size (just make it comfortably bigger than the rate we will read with)
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-        hAITask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps', acqNumSamples);
+        hAITask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps',  round(sampleRate*updatePeriod)*10);
 
-        % * Call an anonymous function function to top up the buffer when half of the samples
+        % * Call an anonymous function function to read from the buffer at the interval set by updatePeriod
         %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
         %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
-        hAITask.registerEveryNSamplesEvent(@readAndPlotData, updatePeriodSamples, false, 'Scaled');
+        hAITask.registerEveryNSamplesEvent(@readAndPlotData,  round(updatePeriod * sampleRate), false, 'Scaled');
    
 
    
         %-------------------------------------------------------------------------------
         % SET UP THE AO TASK
 
-        % * Set the size of the output buffer
+        % * Set the size of the output buffer to be equal to the waveform length (that's all we need, it's circular)
         %   More details at: "help dabs.ni.daqmx.Task.cfgOutputBuffer"
         %   C equivalent - DAQmxCfgOutputBuffer
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/        
-        hAOTask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps', acqNumSamples);
+        hAOTask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps', size(waveform,1));
 
 
         % * Allow sample regeneration
         % When the read buffer becomes empty, the card will just return to the buffer start
         % and then repeat the same values. 
         % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
-        hAOTask.set('writeRegenMode','DAQmx_Val_AllowRegen');
+        hAOTask.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
 
 
         % * Write the waveform to the buffer with a 5 second timeout in case it fails
@@ -125,13 +122,15 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.cfgDigEdgeStartTrig"
         %   DAQmxCfgDigEdgeStartTrig
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgdigedgestarttrig/
-        hAOTask.cfgDigEdgeStartTrig(['/',AIDevice,'/ai/StartTrigger'],'DAQmx_Val_Rising');
+        hAOTask.cfgDigEdgeStartTrig(['/',AIDevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising');
 
 
         % Open a figure window and have it shut off the acquisition when closed
         % See: basicConcepts/windowCloseFunction.m
-        fig=clf;
-        fig.CloseRequestFcn=@windowCloseFcn;
+        fprintf('Close figure to quit acquisition\n')
+        fig = clf;
+        set(fig, 'Name', 'Close figure to stop acquisition')
+        fig.CloseRequestFcn = @windowCloseFcn;
 
         hAOTask.start();
         hAITask.start();
@@ -154,9 +153,9 @@ function AOandAI
 
     function readAndPlotData(src,evnt)
         % Scaled sets the input to be represented as a voltage value
-        inData = readAnalogData(src,src.everyNSamples,'Scaled'); 
+        inData = readAnalogData(src, src.everyNSamples, 'Scaled'); 
         plot(inData)
-        ylim([minVoltage,maxVoltage])
+        ylim([minVoltage, maxVoltage])
         grid on
     end %close readAndPlotData
 

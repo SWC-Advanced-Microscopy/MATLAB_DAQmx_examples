@@ -35,7 +35,7 @@ Simulated mode also works in a virtual machine.
 
 
 ### Running examples
-By default all examples will run on NI DAQ device `Dev1`. 
+By default all examples will run on NI DAQ device `Dev1`.
 In each example this device ID is defined by a variable called `devName` near the start of the function. 
 You will therefore either need a DAQ device called `Dev1` or you will need to edit the code accordingly. 
 You can see which devices are connected in NI MAX or by running: `vidrio.listDeviceIDs` at the MATLAB command line. 
@@ -46,11 +46,15 @@ For each example, first look at the help text (e.g. `help vidrio.AO.softwareTime
 ```
 
 There are further comments in-line so open the example in an editor to learn more.
-
+Example have been tested with an NI PCI-6229. 
+Many have also been verified to work with a simulated NI PCIe-6341. 
+You may get errors with certain combinations of cards and examples. 
+e.g. With a PCI-6115 certain buffered examples will complain that the sample rate is too low. 
 
 
 ## Key Contents
 
+### Basic analog input and output examples
 * `vidrio.AO.softwareTimedVoltage` - software-timed ("on demand") analog output
 * `vidrio.AO.hardwareFiniteVoltage` - hardware-timed analog output (using the on-board clock) of a fixed number of points
 * `vidrio.AO.hardwareContinuousVoltage` - basic continuous analog output with the on-board clock
@@ -61,8 +65,14 @@ There are further comments in-line so open the example in an editor to learn mor
 * `vidrio.AI.hardwareContinuousVoltage` -  A simple example showing hardware-timed continuous analog input with no callback functions
 * `vidrio.AI.hardwareContinuousVoltageWithCallBack` -  Hardware-timed continuous analog input with a callback function. Acq ends when figure is closed.
 * `vidrio.mixed.AOandAI` - continuous AI and AO that run simultaneously and in sync. 
+
+### Basic digital IO and counters
 * `vidrio.DO.softwareBasic` - simple on-demand digital output
 * `vidrio.CO.singlePulse` - create a single digital pulse using a counter task
+
+### More advanced techniques
+* `vidrio.mixed.AOandAI_OO` - Interactive continuous AI and AO using object-oriented programming.
+
 
 ### Hints
 The use of `try`/`catch` blocks should ensure the DAQmx tasks always shut down cleanly. 
