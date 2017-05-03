@@ -38,6 +38,7 @@ simpleOOexample  -  How to build and work with a simple class
 listenerExample  -  Uses a notifier, listener, and a callback function to more elegantly perform 
                     the operations introduced in simpleOOexample.
 
-Those examples are somewhat abstract and it may not be clear what advantage object-oriented programming provides. The following example illustrates a simple use case that would be hard to create without OO:
+Those examples are somewhat abstract and it may not be clear what advantage object-oriented programming provides. 
+The following example illustrates a simple use case that would be hard to create without OO:
 
 streamingPlotter  - Build a "streaming" line plot with properties that can be modified as it runs
