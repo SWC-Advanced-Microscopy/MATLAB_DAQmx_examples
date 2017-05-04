@@ -149,6 +149,7 @@ classdef AOandAI_OO_sharedClock < handle
 
                 % Configure the sampling rate and the buffer size
                 % ===> SET UP THE SHARED CLOCK: Use the AO sample clock for the AI task <===
+                % The supplied sample rate for the AI task is a nominal value. It will in fact use the AO sample clock. 
                 obj.hAITask.cfgSampClkTiming(obj.sampleRateAO,'DAQmx_Val_ContSamps', round(obj.sampleRateAO*obj.updatePeriod)*10, ['/',obj.AODevice,'/ao/SampleClock']);
 
                 % Read back the data with a callback function at an interval defined by updatePeriod
