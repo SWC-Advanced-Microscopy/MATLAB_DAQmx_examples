@@ -56,7 +56,6 @@ classdef AOandAI_OO < handle
 
         sampleRate = 10e3   %Hz
         updatePeriod = 0.15 % How often to read 
-        acqPeriod = 5
 
         % These properties hold information relevant to the plot window
         hFig %The handle to the figure which shows the data is stored here

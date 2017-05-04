@@ -53,7 +53,6 @@ function AOandAI
 
     sampleRate = 10e3; %Hz
     updatePeriod = 0.15; % How often to read 
-    acqPeriod = 5;
 
 
     %Play a sinewave out of the AO 
