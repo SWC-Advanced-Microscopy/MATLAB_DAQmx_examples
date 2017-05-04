@@ -72,7 +72,7 @@ e.g. With a PCI-6115 certain buffered examples will complain that the sample rat
 
 ### More advanced techniques
 * `vidrio.mixed.AOandAI_OO` - Interactive continuous AI and AO using object-oriented programming.
-
+* `vidrio.mixed.AOandAI_OO_sharedClock` - Interactive continuous AI and AO with shared clock between AO and AI.
 
 ### Hints
 The use of `try`/`catch` blocks should ensure the DAQmx tasks always shut down cleanly. 
