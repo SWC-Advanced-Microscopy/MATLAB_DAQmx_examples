@@ -21,7 +21,9 @@ classdef AOandAI_OO < handle
     %              "basicConcepts" directory
     %
     %    Note that in this example the AI and AO do not share a clock. They are set to run at 
-    %    at the same rate, but they won't be running on the same clock. This can create jitter.
+    %    at the same rate, but they won't be running on the same clock. This can create jitter 
+    %    and, for some desired sample rates, continuously variable phase delays. See: 
+    %    vidrio.mixed.AOandAI_OO_sharedClock
     %
     %
     % Usage information
