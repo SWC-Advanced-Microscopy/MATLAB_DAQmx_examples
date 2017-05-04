@@ -81,19 +81,19 @@ function AOandAI
         %--------------------------------------------------------------------------------
         % SET UP THE AI TASK
 
-        % * Configure the sampling rate and the buffer size (just make it comfortably bigger than the rate we will read with)
+        % * Configure the sampling rate and the buffer size (make it comfortably bigger than the rate we will read with)
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
         hAITask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps',  round(sampleRate*updatePeriod)*10);
 
-        % * Call an anonymous function function to read from the buffer at the interval set by updatePeriod
+        % * Use a callback function to read from the buffer at the interval set by updatePeriod
         %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
         %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
         hAITask.registerEveryNSamplesEvent(@readAndPlotData,  round(updatePeriod * sampleRate), false, 'Scaled');
-   
 
-   
+
+
         %-------------------------------------------------------------------------------
         % SET UP THE AO TASK
 

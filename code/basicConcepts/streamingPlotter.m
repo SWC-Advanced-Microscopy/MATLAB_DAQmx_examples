@@ -79,13 +79,13 @@ classdef streamingPlotter < handle
         function obj=streamingPlotter(plotAxes)
             % This method is special and is known as a "constructor". The constructor method always
             % has the same name as the class. It is run once, when an instance of the class is created.
-            
+
             % If no inputs provided, create an axis
             if nargin<1
                 fig=clf;
                 obj.plotAxes = axes('Parent', fig, 'Position', [0.15,0.15,0.8,0.8]);
             else
-                obj.plotAxes = plotAxes;                
+                obj.plotAxes = plotAxes;
             end
 
             % Make some random data
@@ -106,24 +106,31 @@ classdef streamingPlotter < handle
 
 
         function delete(obj)
+            % This is destructor, it runs when the object is deleted
             obj.stopStream
             cla(obj.plotAxes); %remove plot from axes
-        end
+        end % close destructor method
 
 
         function startStream(obj)
             % Starts the timer (could add other stuff here if needed)
             start(obj.plotTimer)
-        end
+        end % close startStream method
 
 
         function stopStream(obj)
             % Stops the timer (could add other stuff here if needed)
             stop(obj.plotTimer)
-        end %close stopStream
-        
+        end %close stopStream method
+
 
         function setUpdateInterval(obj,updateInterval)
+            % Changes the update interval of the plot
+            %
+            % streamingPlotter.setUpdateInterval(intervalInSeconds)
+            %
+            % intervalInSeconds - time between plot update events in seconds. 
+
             % You could also do this with a dependent property (that would be the advanced approach):
             % https://www.mathworks.com/help/matlab/matlab_oop/access-methods-for-dependent-properties.html
             if updateInterval<0.025
@@ -135,7 +142,7 @@ classdef streamingPlotter < handle
             stop(obj.plotTimer)
             obj.plotTimer.Period = obj.updateInterval; %Of course could also do this without the updateInterval property
             start(obj.plotTimer)
-        end % close setUpdateInterval
+        end % close setUpdateInterval method
 
     end %close methods block
 
@@ -144,6 +151,7 @@ classdef streamingPlotter < handle
     methods (Hidden)
 
         % Methods in this block are not directly visible to the user at the command line
+        % i.e. they don't show up with "methods(OBJECTNAME)" 
         function plotStreamerCallBackFcn(obj,~,~)
             obj.plotData(end+1)=rand;
             if length(obj.plotData)>obj.numMarkersOnScreen

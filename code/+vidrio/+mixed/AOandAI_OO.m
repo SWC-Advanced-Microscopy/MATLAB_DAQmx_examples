@@ -1,7 +1,7 @@
 classdef AOandAI_OO < handle
     % Demonstration of simultaneous analog input and output with the dabs.ni.daqmx wrapper
     %
-    % function vidrio.mixed.AOandAI_OO
+    % vidrio.mixed.AOandAI_OO
     %
     %
     % Description:
@@ -89,11 +89,11 @@ classdef AOandAI_OO < handle
             xlabel('Voltage (V)')
             ylabel('Samples')
             obj.axis_B = axes('Parent', obj.hFig, 'Position', [0.58 0.12 0.4 0.8]);
-  
+
             % Plot some empty data which we will later modify in readAndPlotData
             % in the first plot we show the two waveforms as a function of time
             plot(obj.axis_A, zeros(round(obj.sampleRate*obj.updatePeriod),2))
-    
+
             % In the second plot we will show AI 1 as a function of AI 0
             plot(obj.axis_B, zeros(round(obj.sampleRate*obj.updatePeriod),1),'.-')
 
@@ -112,7 +112,7 @@ classdef AOandAI_OO < handle
             % cleaned up gracefully and the object is deleted. This is all done by the method
             % call and by the destructor
             obj.connectToDAQandSetUpChannels
-   
+
 
             % Start the acquisition
             obj.startAcquisition
@@ -131,9 +131,7 @@ classdef AOandAI_OO < handle
             % The tasks should delete automatically (which causes dabs.ni.daqmx.Task.delete to 
             % call DAQmxClearTask on each task) but for paranoia we can delete manually:
             obj.hAITask.delete;
-            obj.hAOTask.delete;      
-
-
+            obj.hAOTask.delete;
         end %close destructor
 
 
@@ -141,7 +139,7 @@ classdef AOandAI_OO < handle
             % Note how we try to name the methods in the most descriptive way possible
             % Attempt to connect to the DAQ and set it up. If we fail, we close the 
             % connection to the DAQ and tidy up
-            try 
+            try
                 % Create separate DAQmx tasks for the AI and AO
                 obj.hAITask = dabs.ni.daqmx.Task('mixedAI');
                 obj.hAOTask = dabs.ni.daqmx.Task('mixedAO');
@@ -153,15 +151,14 @@ classdef AOandAI_OO < handle
 
                 % * Set up the AI task
 
-                % Configure the sampling rate and the number of samples so that we are reading back
-                % with the period defined by updatePeriod (see also the method obj.acqNumSamples)
+                % Configure the sampling rate and the buffer size
                 obj.hAITask.cfgSampClkTiming(obj.sampleRate,'DAQmx_Val_ContSamps', round(obj.sampleRate*obj.updatePeriod)*10);
 
-                % Call an anonymous function function to top up the buffer once less than 
-                % have been played out. Also see: basicConcepts/anonymousFunctionExample.
+                % Read back the data with a callback function at an interval defined by updatePeriod
+                % Also see: basicConcepts/anonymousFunctionExample.
                 obj.hAITask.registerEveryNSamplesEvent(@obj.readAndPlotData, round(obj.sampleRate*obj.updatePeriod), false, 'Scaled');
-               
-               
+
+
                 % * Set up the AO task
                 % Set the size of the output buffer
                 obj.hAOTask.cfgSampClkTiming(obj.sampleRate, 'DAQmx_Val_ContSamps', size(obj.waveforms,1));
