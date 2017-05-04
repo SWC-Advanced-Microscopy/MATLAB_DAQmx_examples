@@ -13,6 +13,9 @@ function AOandAI
     %    vidrio.AI.hardwareContinuousVoltageWithCallBack
     %    vidrio.AO.hardwareContinuousVoltage
     %
+    %    Note that in this example the AI and AO do not share a clock. They are set to run at 
+    %    at the same rate, but they won't be running on the same clock. This can create jitter.
+    %
     %
     % Demonstrated steps:
     %    1. Create the AI and AO tasks and waveform to play.
@@ -97,9 +100,9 @@ function AOandAI
         % SET UP THE AO TASK
 
         % * Set the size of the output buffer to be equal to the waveform length (that's all we need, it's circular)
-        %   More details at: "help dabs.ni.daqmx.Task.cfgOutputBuffer"
-        %   C equivalent - DAQmxCfgOutputBuffer
-        %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/        
+        %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
+        %   C equivalent - DAQmxCfgSampClkTiming
+        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
         hAOTask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps', size(waveform,1));
 
 

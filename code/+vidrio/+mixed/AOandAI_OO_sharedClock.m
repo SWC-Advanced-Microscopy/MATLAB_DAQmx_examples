@@ -1,17 +1,13 @@
-classdef AOandAI_OO < handle
-    % Demonstration of simultaneous analog input and output with the dabs.ni.daqmx wrapper
+classdef AOandAI_OO_sharedClock < handle
+    % Demonstration of simultaneous analog input and output with a shared clock with the dabs.ni.daqmx wrapper
     %
-    % vidrio.mixed.AOandAI_OO
+    % vidrio.mixed.AOandAI_OO_sharedClock
     %
     %
     % Description:
     %    This example demonstrates how to use a class to continuously run data acquisition (AI) 
     %    and signal generation (AO) at the same time and have the tasks synchronized 
-    %    with one another. Note that a single DAQmx task can support only one type of channel:
-    %    http://digital.ni.com/public.nsf/allkb/4D2E6ABCF652542186256F04004FDAC3
-    %    So we need to make one task for AI, one for AO, and start them synchronously with an 
-    %    internal trigger. The focus of this example is doing DAQ tasks using object-oriented 
-    %    programming. 
+    %    with one another and having a shared clock.
     %     * If you want basic simultaneous AI an AO see:
     %             vidrio.mixed.AOandAI
     %     * If you are not familiar with basic AI or AO see the following two examples:
@@ -20,23 +16,21 @@ classdef AOandAI_OO < handle
     %     * If you need a primer on object oriented programming see:
     %              "basicConcepts" directory
     %
-    %    Note that in this example the AI and AO do not share a clock. They are set to run at 
-    %    at the same rate, but they won't be running on the same clock. This can create jitter.
     %
     %
     % Usage information
     % Wire up AO 0 to AI 0 and AO 1 to AI 1 then try the following at the command line:
-    % >> DAQ = vidrio.mixed.AOandAI_OO % Starts the acquisition and plots to screen
+    % >> DAQ = vidrio.mixed.AOandAI_OO_sharedClock % Starts the acquisition and plots to screen
     % >> DAQ.stopAcquisition   % Stops the acquisition
     % >> DAQ.startAcquisition  % Re-starts the acquisition
-    % >> DAQ.changeWaveformBFreqMult(4)  % Have the the AO 1 frequency be four times that of AO 0
+    % >> S.changeAOsampleRate(50E3) % Change the sample rate 
     % >> delete(DAQ) % To stop (or close the window)
     %
     %
     % Also see:
     % ANSI C: DAQmx_ANSI_C_examples/SynchAI-AO.c
     % Basic AO digital triggering: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
-    % AO and AI with a function rather than a class: vidrio.mixed.AOandAI
+    % OO example of AO and AI with separate clocks: vidrio.mixed.AOandAI_OO
 
 
 
@@ -57,7 +51,7 @@ classdef AOandAI_OO < handle
         minVoltage = -10
         maxVoltage =  10
 
-        sampleRate = 10e3   %Hz
+        sampleRateAO = 10e3   %Hz
         updatePeriod = 0.15 % How often to read 
 
         % These properties hold information relevant to the plot window
@@ -72,7 +66,7 @@ classdef AOandAI_OO < handle
 
     methods
 
-        function obj=AOandAI_OO
+        function obj=AOandAI_OO_sharedClock
             % This method is the "constructor". It runs when the class is instantiated.
             % To create an object from a class, there must be a constructor. 
 
@@ -94,10 +88,10 @@ classdef AOandAI_OO < handle
 
             % Plot some empty data which we will later modify in readAndPlotData
             % in the first plot we show the two waveforms as a function of time
-            plot(obj.axis_A, zeros(round(obj.sampleRate*obj.updatePeriod),2))
+            plot(obj.axis_A, zeros(round(obj.sampleRateAO*obj.updatePeriod),2))
 
             % In the second plot we will show AI 1 as a function of AI 0
-            plot(obj.axis_B, zeros(round(obj.sampleRate*obj.updatePeriod),1),'.-')
+            plot(obj.axis_B, zeros(round(obj.sampleRateAO*obj.updatePeriod),1),'.-')
 
             %Make plots look nice
             obj.axis_A.XLabel.String='Voltage (V)';
@@ -154,16 +148,17 @@ classdef AOandAI_OO < handle
                 % * Set up the AI task
 
                 % Configure the sampling rate and the buffer size
-                obj.hAITask.cfgSampClkTiming(obj.sampleRate,'DAQmx_Val_ContSamps', round(obj.sampleRate*obj.updatePeriod)*10);
+                % ===> SET UP THE SHARED CLOCK: Use the AO sample clock for the AI task <===
+                obj.hAITask.cfgSampClkTiming(obj.sampleRateAO,'DAQmx_Val_ContSamps', round(obj.sampleRateAO*obj.updatePeriod)*10, ['/',obj.AODevice,'/ao/SampleClock']);
 
                 % Read back the data with a callback function at an interval defined by updatePeriod
                 % Also see: basicConcepts/anonymousFunctionExample.
-                obj.hAITask.registerEveryNSamplesEvent(@obj.readAndPlotData, round(obj.sampleRate*obj.updatePeriod), false, 'Scaled');
+                obj.hAITask.registerEveryNSamplesEvent(@obj.readAndPlotData, round(obj.sampleRateAO*obj.updatePeriod), false, 'Scaled');
 
 
                 % * Set up the AO task
                 % Set the size of the output buffer
-                obj.hAOTask.cfgSampClkTiming(obj.sampleRate, 'DAQmx_Val_ContSamps', size(obj.waveforms,1));
+                obj.hAOTask.cfgSampClkTiming(obj.sampleRateAO, 'DAQmx_Val_ContSamps', size(obj.waveforms,1));
 
                 % Allow sample regeneration (buffer is circular)
                 obj.hAOTask.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
@@ -206,28 +201,19 @@ classdef AOandAI_OO < handle
 
         function generateWaveforms(obj)
             % Build sine waves to play through the AO line. NOTE: column vectors
-            waveform0 = sin(linspace(-pi,pi, obj.sampleRate/51))' * 5; 
+            waveform0 = sin(linspace(-pi,pi, obj.sampleRateAO/51))' * 5; 
             waveform1 = sin(linspace(-pi*obj.waveform_B_freqMultiplier,pi*obj.waveform_B_freqMultiplier, length(waveform0)))' * 5; 
             obj.waveforms = [waveform0,waveform1];
         end %close generateWaveforms
 
 
-        function changeWaveformBFreqMult(obj,newVal)
-            % Restarts the acquisition with a new frequency relationship
+        function changeAOsampleRate(obj,newRate)
+            % Change sampling rate to a new rate. 
             obj.stopAcquisition
-            obj.waveform_B_freqMultiplier=newVal;
-            obj.generateWaveforms
-
-            try
-                obj.hAOTask.writeAnalogData(obj.waveforms, 5)
-            catch ME 
-                daqDemosHelpers.errorDisplay(ME)
-                %Tidy up if we fail
-                obj.delete
-            end
-
+            obj.sampleRateAO = newRate;
+            obj.hAOTask.cfgSampClkTiming(obj.sampleRateAO, 'DAQmx_Val_ContSamps', size(obj.waveforms,1));
             obj.startAcquisition
-        end %close changeWaveformBFreqMult
+        end %close changeAOsampleRate
 
 
         function readAndPlotData(obj,src,evnt)
@@ -242,7 +228,6 @@ classdef AOandAI_OO < handle
             C=get(obj.axis_B, 'Children');
             C.XData=inData(:,1);
             C.YData=inData(:,2);
-
         end %close readAndPlotData
 
 
