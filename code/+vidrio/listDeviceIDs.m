@@ -98,4 +98,11 @@ function varargout=listDeviceIDs(varargin)
 
         details = dabs.ni.daqmx.Device(thisDevice);
         cleanProdCat = regexprep(details.productCategory,'DAQmx_Val_(\w)(\w+)DAQ','$1-$2 DAQ');
-        fprintf('\t%s\t%s\t%s\n', paddedName, cleanProdCat, details.productType)
+
+        if details.serialNum==0 %Then it's a simulated device
+            simString='SIMULATED';
+        else
+            simString='';
+        end
+        fprintf('\t%s\t%s\t%s\t%s\n', paddedName, cleanProdCat, ...
+            details.productType, simString)
