@@ -34,12 +34,12 @@ function varargout=listDeviceIDs(varargin)
     %    0
     %
     % >> vidrio.listDeviceIDs
-    % The devices on your system are:
-    %     aux1
-    %     aux2
-    %     Dev1
-    %     scan
-    %
+    %   The devices on your system are:
+    %    beam    X-Series DAQ    PXIe-6341
+    %    pifoc   X-Series DAQ    PCIe-6321
+    %    pmt     X-Series DAQ    USB-6343 (BNC)
+    %    resscan X-Series DAQ    PXIe-6341
+    %    scan    S-Series DAQ    PXIe-6124
     %
     % Rob Campbell - Basel, 2017
 
@@ -76,10 +76,12 @@ function varargout=listDeviceIDs(varargin)
         return
     end
 
-    
+
     %Display device names
     fprintf('\nThe devices on your system are:\n')
-    cellfun(@(x) displayDevice(x), devices )
+
+    maxNameLength=max(cellfun(@length,devices));
+    cellfun(@(x) displayDevice(x,maxNameLength), devices )
     fprintf('\n')
 
 
@@ -90,7 +92,10 @@ function varargout=listDeviceIDs(varargin)
 
 
 
-    function displayDevice(thisDevice)
+    function displayDevice(thisDevice,padNameTo)
+        paddedName = repmat(' ',1,padNameTo);
+        paddedName(1:length(thisDevice))=thisDevice;
+
         details = dabs.ni.daqmx.Device(thisDevice);
         cleanProdCat = regexprep(details.productCategory,'DAQmx_Val_(\w)(\w+)DAQ','$1-$2 DAQ');
-        fprintf('\t%s\t%s\t%s\n', thisDevice , details.productType, cleanProdCat)
+        fprintf('\t%s\t%s\t%s\n', paddedName, cleanProdCat, details.productType)
