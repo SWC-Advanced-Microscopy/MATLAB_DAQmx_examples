@@ -91,7 +91,6 @@ function softwareTimedVoltage
         if exist('hTask','var')
             fprintf('Cleaning up DAQ task\n');
             hTask.writeAnalogData(0); %Set channel to 0 V
-            hTask.stop;    % Calls DAQmxStopTask
             delete(hTask); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
         else
             fprintf('No task variable present for clean up\n')
