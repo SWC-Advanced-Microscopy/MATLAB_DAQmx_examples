@@ -99,13 +99,14 @@ function hardwareContinuousVoltageNoRegen_DigTrig
         % When the read buffer becomes empty, the card will just return to the buffer start
         % and then repeat the same values. 
         % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
+        % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
         hTask.set('writeRegenMode','DAQmx_Val_AllowRegen');
 
 
         % * Set the size of the output buffer
         %   More details at: "help dabs.ni.daqmx.Task.cfgOutputBuffer"
         %   C equivalent - DAQmxCfgOutputBuffer
-        %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/        
+        %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/
         hTask.cfgOutputBuffer(numSamplesPerChannel);
 
 

@@ -87,13 +87,14 @@ function hardwareContinuousVoltage
         % When the read buffer becomes empty, the card will not return to the start
         % and re-output the same values. 
         % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
+        % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
         hTask.set('writeRegenMode','DAQmx_Val_DoNotAllowRegen');
 
 
         % * Set the size of the output buffer
         %   More details at: "help dabs.ni.daqmx.Task.cfgOutputBuffer"
         %   C equivalent - DAQmxCfgOutputBuffer
-        %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/        
+        %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/
         hTask.cfgOutputBuffer(numSamplesPerChannel);
 
 

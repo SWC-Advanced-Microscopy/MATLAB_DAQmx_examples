@@ -34,28 +34,25 @@ function varargout=listDeviceIDs(varargin)
     %    0
     %
     % >> vidrio.listDeviceIDs
-    % The devices on your system are:
-    %     aux1
-    %     aux2
-    %     Dev1
-    %     scan
-    %
+    %   The devices on your system are:
+    %    beam    X-Series DAQ    PXIe-6341
+    %    pifoc   X-Series DAQ    PCIe-6321
+    %    pmt     X-Series DAQ    USB-6343 (BNC)
+    %    resscan X-Series DAQ    PXIe-6341
+    %    scan    S-Series DAQ    PXIe-6124
     %
     % Rob Campbell - Basel, 2017
 
 
 
     %Start a task and attempt to read device names
-    hNI=dabs.ni.daqmx.Task('thisTASK');
+    hNI=dabs.ni.daqmx.System;
 
     try
-        devices = strsplit(hNI.system.devNames, ', ');
+        devices = strsplit(hNI.devNames, ', ');
     catch ME
-        delete(hNI)
         rethrow(ME)
     end
-
-    delete(hNI)
 
 
     % If no devices are connected then say so and quit
@@ -82,10 +79,30 @@ function varargout=listDeviceIDs(varargin)
 
     %Display device names
     fprintf('\nThe devices on your system are:\n')
-    cellfun(@(x) fprintf('\t%s\n',x), devices )
+
+    maxNameLength=max(cellfun(@length,devices));
+    cellfun(@(x) displayDevice(x,maxNameLength), devices )
     fprintf('\n')
+
 
 
     if nargout>0
         varargout{1}=devices;
     end
+
+
+
+    function displayDevice(thisDevice,padNameTo)
+        paddedName = repmat(' ',1,padNameTo);
+        paddedName(1:length(thisDevice))=thisDevice;
+
+        details = dabs.ni.daqmx.Device(thisDevice);
+        cleanProdCat = regexprep(details.productCategory,'DAQmx_Val_(\w)(\w+)DAQ','$1-$2 DAQ');
+
+        if details.serialNum==0 %Then it's a simulated device
+            simString='SIMULATED';
+        else
+            simString='';
+        end
+        fprintf('\t%s\t%s\t%s\t%s\n', paddedName, cleanProdCat, ...
+            details.productType, simString)
