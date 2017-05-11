@@ -92,6 +92,7 @@ If they do not:
 
 ### DAQmx in other languages
 * [PyDAQmx](https://pythonhosted.org/PyDAQmx/index.html)
+* A [wrapper for PyDAQmx](https://github.com/petebachant/daqmx)
 * [Calling the DAQmx dll directly from Python and Perl](http://www.ni.com/white-paper/8911/en/)
 * For ANSI C examples look in `C:\Users\Public\Documents\National Instruments\NI-DAQ\Examples`
 * You can find side-by-side examples of how DAQmx works in different languages [here](http://www.ni.com/product-documentation/2835/en/).

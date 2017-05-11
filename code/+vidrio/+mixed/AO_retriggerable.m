@@ -24,29 +24,35 @@ function AO_retriggerable
     %
     % IMPORTANT NOTE
     % Retriggerable tasks only work with X-Series DAQ boards by NI, e.g. NI
-    % DAQ 6321.
-    
+    % PCIe-6321 or USB-6343.
+    %    
     %
     % Demonstrated steps:
-    %    1. Create a vector comprising a single cycle of a sawtooth waveform of 50 ms duration that will played every time a trigger comes in.
+    %    1. Create a vector comprising a single cycle of a sawtooth waveform of 
+    %       1 s duration that will played every time a trigger comes in.
     %    2. Create a task.
     %    3. Create an Analog Output voltage channel.
     %    4. Define the update (sample) rate for the voltage generation.
-    %    5. Define external trigger source
+    %    5. Define external trigger source and set the task to be re-triggerable
     %    6  Write the waveform to the buffer. 
     %    7. Call the Start function and wait until generation is complete.
     %    8. Clear the task
     %    9. Display an error if any.
     %
     %
-    % Monitoring the output
-    % If you lack an oscilloscope you may physically connect the analog output to 
-    % an analog input and monitor this using the NI MAX test panel. You likely will need
-    % to select RSE: http://www.ni.com/white-paper/3344/en/
+    % Wiring:
+    % * Your device, devName, will need to be an X-series NI DAQ. 
+    % * Feed AO 0 to an osciloscope.
+    % * Connect PFI0 of devName to a digital trigger. e.g. Port0/Line0 on devName.
+    % * Start MAX and enter the digital test panel for the device to be producing the
+    %   triggers. 
+    % * Run this function.
+    % * The waveform is produced each time a positive-going TTL pulse is delivered to
+    %   PFI0. 
     %
     %
-    % Rob Campbell, Peter Rupprecht - Basel, 2017
-    %
+    % Peter Rupprecht - Basel, 2017
+
 
 
     %Define a cleanup function
@@ -54,19 +60,20 @@ function AO_retriggerable
 
     %% Parameters for the acquisition (device and channels)
     devName = 'Dev1';       % the name of the DAQ device as shown in MAX
-    taskName = 'retrigAO';    % A string that will provide a label for the task
+    taskName = 'retrigAO';  % A string that will provide a label for the task
     physicalChannel = 0;    % A scalar or an array with the channel numbers
-    triggerChannel = 0;    % A scalar or an array with the channel numbers
+    triggerChannel = 0;     % A scalar defining the trigger channel (e.g. If this is zero, the trigger line is PFI0)
     minVoltage = -10;       % Channel input range minimum
     maxVoltage = 10;        % Channel input range maximum
     
     % Task configuration
-    sampleRate = 50000;  
+    sampleRate = 5000;  
     
     amplitude = 1;
-    numSamplesPerChannel = 2500;
-    sawtooth = linspace(-amplitude,amplitude,numSamplesPerChannel)';
 
+    sawtooth = linspace(-amplitude,amplitude, 2500)';
+    sawtooth = [sawtooth; flipud(sawtooth)];
+    numSamplesPerChannel = length(sawtooth);
 
     try
         % * Create a DAQmx task
@@ -97,7 +104,7 @@ function AO_retriggerable
         hTask.cfgOutputBuffer(numSamplesPerChannel);
 
         % * Define the channel of the trigger source
-        %   Set task as retriggerable
+        %   Set task as retriggerable       
         hTask.cfgDigEdgeStartTrig(sprintf('PFI%d',triggerChannel),'DAQmx_Val_Rising');
         hTask.set('startTrigRetriggerable',1);
         
@@ -112,8 +119,10 @@ function AO_retriggerable
         % will wait for triggers until it is stopped
         hTask.start();
 
-        fprintf('Waiting for triggers ...\n')
-        pause(10);
+        fprintf('Waiting for triggers (ctrl-c to stop) ...\n')
+        while 1
+            pause(0.5)
+        end
         hTask.stop();
         
     catch ME
