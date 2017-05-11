@@ -52,19 +52,21 @@ function AO_retriggerable
     %
     %
     % Peter Rupprecht - Basel, 2017
-
-
+    %
+    % Also see:
+    % DAQmx_ANSI_C_examples/MultVoltUpdates-IntClk-Retrig.c
+    % vidrio.mixed.DO_retriggerable
 
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);
 
     %% Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
-    taskName = 'retrigAO';  % A string that will provide a label for the task
-    physicalChannel = 0;    % A scalar or an array with the channel numbers
-    triggerChannel = 0;     % A scalar defining the trigger channel (e.g. If this is zero, the trigger line is PFI0)
-    minVoltage = -10;       % Channel input range minimum
-    maxVoltage = 10;        % Channel input range maximum
+    devName = 'Dev1';         % the name of the DAQ device as shown in MAX
+    taskName = 'retrigAO';    % A string that will provide a label for the task
+    physicalChannel = 0;      % A scalar or an array with the channel numbers
+    triggerChannel = 'PFI0';  % A string defining the PFI channel on which triggers come
+    minVoltage = -10;         % Channel input range minimum
+    maxVoltage = 10;          % Channel input range maximum
     
     % Task configuration
     sampleRate = 5000;  
@@ -105,7 +107,7 @@ function AO_retriggerable
 
         % * Define the channel of the trigger source
         %   Set task as retriggerable       
-        hTask.cfgDigEdgeStartTrig(sprintf('PFI%d',triggerChannel),'DAQmx_Val_Rising');
+        hTask.cfgDigEdgeStartTrig(triggerChannel,'DAQmx_Val_Rising');
         hTask.set('startTrigRetriggerable',1);
         
         % * Write the waveform to the buffer with a 5 second timeout in case it fails
