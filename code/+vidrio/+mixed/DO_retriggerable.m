@@ -10,10 +10,10 @@ function DO_retriggerable
     %
     %
     % IMPORTANT NOTE
-    % Retriggerable tasks only work with X-Series DAQ boards by NI, e.g. NI
-    % DAQ 6321. This task uses a counter of the board. Only few counters
-    % are available per board (typically four).
-    
+    % Retriggerable tasks only work with X-Series DAQ boards such as
+    % PCIe-6321 or USB-6343. This task uses a counter and only a few counters
+    % are available per board (typically four for more recent NI DAQ devices).
+    %
     %
     % Demonstrated steps:
     %    1. Create a task.
@@ -30,21 +30,25 @@ function DO_retriggerable
     % to select RSE: http://www.ni.com/white-paper/3344/en/
     %
     %
-    % Rob Campbell, Peter Rupprecht - Basel, 2017
+    % Peter Rupprecht - Basel, 2017
     %
-
+    % Also see:
+    % vidrio.CO.singlePulse - setting up a single pulse with a counter
+    % vidrio.mixed.AO_retriggerable
 
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);
 
     %% Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
+    devName = 'beam';       % the name of the DAQ device as shown in MAX
     taskName = 'retrigDO';    % A string that will provide a label for the task
-    physicalChannel = 0;    % A scalar or an array with the channel numbers
-    triggerChannel = 1;    % A scalar or an array with the channel numbers
+    counterID=0;       % The ID of the counter to use
+
+    physicalChannel = 1;      % A scalar defining the output on which the pulses are delivered
+    triggerChannel = 'PFI0';  % A string defining the PFI channel on which triggers come
 
     % Task configuration
-    frequency = 30; % Hz
+    frequency = 3; % Hz
     dutyCycle = 0.25;
     
     try
@@ -54,30 +58,35 @@ function DO_retriggerable
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
         hTask = dabs.ni.daqmx.Task(taskName);
 
-        % * Set up analog output 0 on device defined by variable devName
-        %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan"
-        %   C equivalent - DAQmxCreateAOVoltageChan
-        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
-        hTask.createCOPulseChanFreq(devName, physicalChannel,[], frequency, dutyCycle)
+        % * Set up a channel to generate digital pulses and define the pulse properties
+        %   More details at: "help dabs.ni.daqmx.Task.createCOPulseChanFreq"
+        %   C equivalent - DAQmxCreateCOPulseChanFreq
+        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatecopulsechanfreq/
+        hTask.createCOPulseChanFreq(devName, counterID, [], frequency, dutyCycle);
         
+        % Set the pulses to come out of PFI4
+        % TODO: is this the best way of setting this property? Where is this documented?
+        hTask.channels(1).set('pulseTerm','PFI4');
+
         % * Alternatively define delay and duration of pulses manually
-        % set(hTask.channels(1),'pulseTimeInitialDelay',3e-8);
-        % set(hTask.channels(1),'pulseLowTime',3e-8);
-        % set(hTask.channels(1),'pulseHighTime',40e-6); 
+         %set(hTask.channels(1),'pulseTimeInitialDelay',3e-8);
+         %set(hTask.channels(1),'pulseLowTime',3e-8);
+         %set(hTask.channels(1),'pulseHighTime',40e-6); 
         
         
         % * Define the channel of the trigger source
         %   Set task as retriggerable
-        hTask.cfgDigEdgeStartTrig(sprintf('PFI%d',triggerChannel),'DAQmx_Val_Rising');
+        hTask.cfgDigEdgeStartTrig(triggerChannel,'DAQmx_Val_Rising');
         hTask.set('startTrigRetriggerable',1); 
         
         % Start the task and wait until it is complete. Task starts and
         % will wait for triggers until it is stopped
         hTask.start();
 
-        fprintf('Waiting for triggers ...\n')
-        pause(10);
-        hTask.stop();
+        fprintf('Waiting for triggers (ctrl-c to stop) ...\n')
+        while 1
+            pause(0.5)
+        end
 
     catch ME
        daqDemosHelpers.errorDisplay(ME)

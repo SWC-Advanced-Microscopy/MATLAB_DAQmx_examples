@@ -27,11 +27,11 @@ function singlePulse
     tidyUp = onCleanup(@cleanUpFunction);
 
     % Parameters for the pulse generation
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
-    counterID=0; %The ID of the counter to use
-    lowTime = 0.25; %How long the pulse stays low (TODO: I think this is after the pulse ends)
-    highTime=0.25; %How long the pulse is stay high
-    initialDelay=2; %How long to wait before generating the first pulse (seconds)
+    devName = 'Dev1';  % The name of the DAQ device as shown in MAX
+    counterID=0;       % The ID of the counter to use
+    lowTime = 0.25;    % How long the pulse stays low (TODO: I think this is after the pulse ends)
+    highTime=0.25;     % How long the pulse is stay high
+    initialDelay=2;    % How long to wait before generating the first pulse (seconds)
 
     try
         % * Create a DAQmx task called 'example_clk_task'

@@ -125,7 +125,6 @@ function AO_retriggerable
         while 1
             pause(0.5)
         end
-        hTask.stop();
         
     catch ME
        daqDemosHelpers.errorDisplay(ME)
