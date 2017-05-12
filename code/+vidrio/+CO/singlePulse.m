@@ -27,11 +27,11 @@ function singlePulse
     tidyUp = onCleanup(@cleanUpFunction);
 
     % Parameters for the pulse generation
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
-    counterID=0; %The ID of the counter to use
-    lowTime = 0.25; %How long the pulse stays low (TODO: I think this is after the pulse ends)
-    highTime=0.25; %How long the pulse is stay high
-    initialDelay=2; %How long to wait before generating the first pulse (seconds)
+    devName = 'Dev1';  % The name of the DAQ device as shown in MAX
+    counterID=0;       % The ID of the counter to use
+    lowTime = 0.25;    % How long the pulse stays low (TODO: I think this is after the pulse ends)
+    highTime=0.25;     % How long the pulse is stay high
+    initialDelay=2;    % How long to wait before generating the first pulse (seconds)
 
     try
         % * Create a DAQmx task called 'example_clk_task'
@@ -48,8 +48,7 @@ function singlePulse
         hTask.createCOPulseChanTime(devName, counterID, '', lowTime, highTime, initialDelay, 'DAQmx_Val_Low');
 
 
-        % Set the pulses to come out of PFI4
-        % TODO: is this the best way of setting this property? Where is this documented?
+        % Set the pulses to come out of PFI4 instead of the default (you can "get" pulseTerm to see what that would be)
         hTask.channels(1).set('pulseTerm','PFI4');
 
 
