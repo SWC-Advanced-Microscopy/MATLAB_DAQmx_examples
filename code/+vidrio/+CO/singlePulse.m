@@ -48,8 +48,7 @@ function singlePulse
         hTask.createCOPulseChanTime(devName, counterID, '', lowTime, highTime, initialDelay, 'DAQmx_Val_Low');
 
 
-        % Set the pulses to come out of PFI4
-        % TODO: is this the best way of setting this property? Where is this documented?
+        % Set the pulses to come out of PFI4 instead of the default (you can "get" pulseTerm to see what that would be)
         hTask.channels(1).set('pulseTerm','PFI4');
 
 

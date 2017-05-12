@@ -40,11 +40,9 @@ function DO_retriggerable
     tidyUp = onCleanup(@cleanUpFunction);
 
     %% Parameters for the acquisition (device and channels)
-    devName = 'beam';       % the name of the DAQ device as shown in MAX
-    taskName = 'retrigDO';    % A string that will provide a label for the task
-    counterID=0;       % The ID of the counter to use
-
-    physicalChannel = 1;      % A scalar defining the output on which the pulses are delivered
+    devName = 'beam';        % the name of the DAQ device as shown in MAX
+    taskName = 'retrigDO';   % A string that will provide a label for the task
+    counterID=0;             % The ID of the counter to use
     triggerChannel = 'PFI0';  % A string defining the PFI channel on which triggers come
 
     % Task configuration
@@ -64,18 +62,10 @@ function DO_retriggerable
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatecopulsechanfreq/
         hTask.createCOPulseChanFreq(devName, counterID, [], frequency, dutyCycle);
         
-        % Set the pulses to come out of PFI4
-        % TODO: is this the best way of setting this property? Where is this documented?
-        hTask.channels(1).set('pulseTerm','PFI4');
-
-        % * Alternatively define delay and duration of pulses manually
-         %set(hTask.channels(1),'pulseTimeInitialDelay',3e-8);
-         %set(hTask.channels(1),'pulseLowTime',3e-8);
-         %set(hTask.channels(1),'pulseHighTime',40e-6); 
-        
-        
-        % * Define the channel of the trigger source
-        %   Set task as retriggerable
+        % hTask.channels(1).set('pulseTerm','PFI4'); % Pulses come out of the default channel unless you change this
+        fprintf('Pulses will come out of %s\n', get(hTask.channels,'pulseTerm'))
+          
+        % * Define the channel on which we listen for triggers and set task as retriggerable
         hTask.cfgDigEdgeStartTrig(triggerChannel,'DAQmx_Val_Rising');
         hTask.set('startTrigRetriggerable',1); 
         

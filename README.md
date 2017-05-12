@@ -56,6 +56,7 @@ e.g. With a PCI-6115 certain buffered examples will complain that the sample rat
 
 * `vidrio.listDeviceIDs` - shows how to list available device and query them to obtain detailed information
 
+
 ### Basic analog input and output examples
 * `vidrio.AO.softwareTimedVoltage` - software-timed ("on demand") analog output
 * `vidrio.AO.hardwareFiniteVoltage` - hardware-timed analog output (using the on-board clock) of a fixed number of points
@@ -75,7 +76,7 @@ e.g. With a PCI-6115 certain buffered examples will complain that the sample rat
 ### More advanced techniques
 * `vidrio.mixed.AOandAI_OO` - Interactive continuous AI and AO using object-oriented programming.
 * `vidrio.mixed.AOandAI_OO_sharedClock` - Interactive continuous AI and AO with shared clock between AO and AI.
-
+* For retriggerable tasks see `vidrio.mixed.DO_retriggerable` and `vidrio.mixed.AO_retriggerable`
 
 
 ### Hints
