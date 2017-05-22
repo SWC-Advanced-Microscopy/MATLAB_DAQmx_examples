@@ -49,6 +49,8 @@ classdef listenerExample < handle
             % In the case above, we pass the source object and the event object. These aren't used for anything
             % here, but I show the full form above. If you wanted to ignore them, you could just do:
             %   addlistener(obj,'examplePropertyPopulated', @(~,~) obj.plotIt); 
+            %  or:
+            %   addlistener(obj,'examplePropertyPopulated', @obj.plotIt); 
         end %close listenerExample constructor
 
 
