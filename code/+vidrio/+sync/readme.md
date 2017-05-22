@@ -2,7 +2,7 @@ The examples in this folder relate to synchronising tasks.
 It's assumed you're already familiar with the information in vidrio.mixed
 Also see ContinuousAI.c in the DAQmx_ANSI_C_examples directory
 
-One
+### One
 Let's start two tasks at the same time on different DAQs from the command line.
 Hook up the AO0 lines of each DAQ to a scope then run:
 >> B=vidrio.sync.sine_AO_AI('Dev1');
@@ -18,7 +18,7 @@ Stop the acquisition:
 >> B.stopAcquisition;R.stopAcquisition;
 
 
-Two
+### Two
 Will this problem go away if start the two waveforms at exactly the same time?
 vidrio.sync.sine_AO_AI triggers the AO task from the AI task so we need to set this up to wait for a trigger:
 
@@ -39,7 +39,7 @@ Stop the acquisition:
 >> B.stopAcquisition;R.stopAcquisition;
 
 
-Three
+### Three
 Clearly we need a shared clock between the boards.
 Each class is set up such that the AI task uses the AO clock. 
 So all we need to do is have the AO clock of the DAQ in one class use the AO clock of the DAQ in the other class.
