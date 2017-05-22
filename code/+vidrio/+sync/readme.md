@@ -62,7 +62,6 @@ So all we need to do is have the AO clock of the DAQ in one class use the AO clo
 If your cards are in a PXI chassis or linked by an RTSI cable then you simply tell DAQmx that one device should use the other's clock:
 
 
-
 ```
 % Ensure the stopAcquisition methods have been run.
 >> B.hAOTask.cfgSampClkTiming(B.sampleRate,'DAQmx_Val_ContSamps', size(B.waveform,1), ['/',R.DAQdevice,'/ao/SampleClock'])
@@ -74,3 +73,18 @@ Easy: no more phase delay!
 
 In other situations (e.g. mixed PCI, PXI, or USB; or even devices on different PCs) you will need to [export the clock](http://digital.ni.com/public.nsf/allkb/3A7F1402B2A1CE7686256E93007E66C0). 
 So look at the device routes and find on which PFI ports the AO sample clock can be is broadcast then we can use [DAQmxExportSignal](http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxexportsignal/).
+
+For example, we can export the AO sample clock from one device to PFI10:
+```
+>> R.hAOTask.exportSignal('DAQmx_Val_SampleClock', 'PFI10')
+```
+
+You'll be able to see the pulses on a scope, but they are short: 40 ns or so FWHM. 
+Next we set the other DAQ to import a clock on PFI1 (we're using PFI0 for the start trigger).
+Wire up your DAQ remembering to use PF1 not digital port 1 on line 0.
+```
+>> B.hAOTask.cfgSampClkTiming(B.sampleRate,'DAQmx_Val_ContSamps', size(B.waveform,1), 'PFI1')
+>> B.startAcquisition;R.startAcquisition;
+```
+
+Nice synchronised waveforms!
