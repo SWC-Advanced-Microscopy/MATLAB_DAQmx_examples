@@ -20,6 +20,7 @@ Trigger off the waveform on channel 1 of the scope and change the time scale to 
 Watch for a while. What do you notice?
 
 Stop the acquisition:
+
 ```
 >> B.stopAcquisition;R.stopAcquisition;
 ```
@@ -29,7 +30,10 @@ Will this problem go away if start the two waveforms at exactly the same time?
 vidrio.sync.sine_AO_AI triggers the AO task from the AI task so we need to set this up to wait for a trigger:
 
 Set up triggers so nothing happens until 5V goes into PFI0
+
+```
 >> B.hAITask.cfgDigEdgeStartTrig('PFI0','DAQmx_Val_Rising'); R.hAITask.cfgDigEdgeStartTrig('PFI0','DAQmx_Val_Rising');
+```
 
 Now wire up the rack so that the two PFI0 ports are connected. If using BNC, attach a T-piece to one.
 
@@ -49,18 +53,24 @@ Stop the acquisition:
 ```
 
 ### Three
-Clearly we need a shared clock between the boards.
-Each class is set up such that the AI task uses the AO clock. 
+The clocks are drifting! 
+Clearly we need a *shared clock* between the boards.
+Each class is set up such that the AI task on that device uses the AO clock of the same device. 
 So all we need to do is have the AO clock of the DAQ in one class use the AO clock of the DAQ in the other class.
 
-Ensure the stopAcquisition methods have been run.
 
-If your cards are in a PXI chassis or linked by an RTSI cable then just do:
+If your cards are in a PXI chassis or linked by an RTSI cable then you simply tell DAQmx that one device should use the other's clock:
+
+
 
 ```
+% Ensure the stopAcquisition methods have been run.
 >> B.hAOTask.cfgSampClkTiming(B.sampleRate,'DAQmx_Val_ContSamps', size(B.waveform,1), ['/',R.DAQdevice,'/ao/SampleClock'])
 >> B.startAcquisition;R.startAcquisition;
 ```
 
 Then trigger. 
 Easy: no more phase delay!
+
+In other situations (e.g. mixed PCI, PXI, or USB; or even devices on different PCs) you will need to [export the clock](http://digital.ni.com/public.nsf/allkb/3A7F1402B2A1CE7686256E93007E66C0). 
+So look at the device routes and find on which PFI ports the AO sample clock can be is broadcast then we can use [DAQmxExportSignal](http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxexportsignal/).
