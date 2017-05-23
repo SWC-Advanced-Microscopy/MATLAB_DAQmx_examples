@@ -1,4 +1,5 @@
 # DAQmx Examples
+<img src="https://github.com/tenss/MatlabDAQmx/blob/master/code/%2Bvidrio/%2Bsync/phase_example.jpg" />
 
 These examples show you how to interact with National Instruments devices using MATLAB.
 The focus is  [Vidrio's](http://scanimage.vidriotechnologies.com/display/SIH/ScanImage+Home) free [DAQmx](https://www.ni.com/dataacquisition/nidaqmx.htm) wrapper, `dabs.ni.daqmx`.
