@@ -25,6 +25,8 @@ Stop the acquisition:
 >> B.stopAcquisition;R.stopAcquisition;
 ```
 
+Also see `vidrio.sync.phaseMonitor('Dev1','Dev2');`
+
 ### Two
 Will this problem go away if start the two waveforms at exactly the same time?
 vidrio.sync.sine_AO_AI triggers the AO task from the AI task so we need to set this up to wait for a trigger:
