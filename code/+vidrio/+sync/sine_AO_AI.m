@@ -38,7 +38,7 @@ classdef sine_AO_AI < handle
         maxVoltage =  10
 
         sampleRate = 5e4   %Hz
-        updatePeriod = 0.15 % How often to read 
+        updatePeriod = 0.1 % How often to read 
     end %close properties block
 
     properties (SetObservable) 

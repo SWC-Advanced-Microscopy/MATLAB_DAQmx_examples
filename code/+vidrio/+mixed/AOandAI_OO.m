@@ -90,8 +90,6 @@ classdef AOandAI_OO < handle
 
             %Make two empty axes which we fill in the method readAndPlotData
             obj.axis_A = axes('Parent', obj.hFig, 'Position', [0.1 0.12 0.4 0.8]);
-            xlabel('Voltage (V)')
-            ylabel('Samples')
             obj.axis_B = axes('Parent', obj.hFig, 'Position', [0.58 0.12 0.4 0.8]);
 
             % Plot some empty data which we will later modify in readAndPlotData
@@ -102,11 +100,11 @@ classdef AOandAI_OO < handle
             plot(obj.axis_B, zeros(round(obj.sampleRate*obj.updatePeriod),1),'.-')
 
             %Make plots look nice
-            obj.axis_A.XLabel.String='Voltage (V)';
-            obj.axis_A.YLabel.String='Samples';
+            obj.axis_A.YLabel.String='Voltage (V)';
+            obj.axis_A.XLabel.String='Samples';
 
-            obj.axis_B.XLabel.String='Voltage (V)';
-            obj.axis_B.YLabel.String='Samples';
+            obj.axis_B.XLabel.String='AI0 Voltage (V)';
+            obj.axis_B.YLabel.String='AI1 Voltage (V)';
 
             % Set properties of both axes together
             set([obj.axis_A,obj.axis_B], 'Box', 'On', 'XGrid', 'On', 'YGrid', 'On', 'YLim', [obj.minVoltage,obj.maxVoltage])
