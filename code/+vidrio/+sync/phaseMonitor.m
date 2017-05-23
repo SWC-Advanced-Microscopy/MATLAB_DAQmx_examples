@@ -18,10 +18,12 @@ classdef phaseMonitor < handle
 
     properties (Hidden)
         listeners
-                % These properties hold information relevant to the plot window
+
+        % These properties hold information relevant to the plot window
         hFig %The handle to the figure which shows the data is stored here
         axis_A %Handles for the two axes
         axis_B 
+        axis_C
 
     end
 
@@ -29,8 +31,12 @@ classdef phaseMonitor < handle
     methods
 
         function obj=phaseMonitor(DAQ_ID_A, DAQ_ID_B)
-         % Build the figure window and have it shut off the acquisition when closed.
-            % See: basicConcepts/windowCloseFunction.m
+
+            % Connect to DAQ
+            obj.taskA=vidrio.sync.sine_AO_AI(DAQ_ID_A);
+            obj.taskB=vidrio.sync.sine_AO_AI(DAQ_ID_B);
+
+
             obj.hFig = clf;
             obj.hFig.Position(3)=obj.hFig.Position(3)*1.5; %Make figure a little wider
             obj.hFig.Name='Close figure to stop acquisition'; %This is just the OO notation. We could also use the set command.
@@ -38,34 +44,35 @@ classdef phaseMonitor < handle
 
 
             %Make two empty axes which we fill in the method readAndPlotData
-            obj.axis_A = axes('Parent', obj.hFig, 'Position', [0.1 0.12 0.4 0.8]);
-            xlabel('Voltage (V)')
-            ylabel('Samples')
-            obj.axis_B = axes('Parent', obj.hFig, 'Position', [0.58 0.12 0.4 0.8]);
+            obj.axis_A = axes('Parent', obj.hFig, 'Position', [0.1 0.12 0.4 0.4]);
+            obj.axis_B = axes('Parent', obj.hFig, 'Position', [0.1 0.55 0.4 0.4]);
+            obj.axis_C = axes('Parent', obj.hFig, 'Position', [0.55 0.12 0.4 0.8]);
 
             % Plot some empty data which we will later modify in readAndPlotData
-            % in the first plot we show the two waveforms as a function of time
-            plot(obj.axis_A, zeros(round(obj.sampleRate*obj.updatePeriod),2))
+            % in the first two plots we show the two waveforms as a function of time
+            plot(obj.axis_A, zeros(round(obj.taskA.sampleRate*obj.taskA.updatePeriod),1))
+            plot(obj.axis_B, zeros(round(obj.taskA.sampleRate*obj.taskA.updatePeriod),1))
 
-            % In the second plot we will show AI 1 as a function of AI 0
-            plot(obj.axis_B, zeros(round(obj.sampleRate*obj.updatePeriod),1),'.-')
+            % In the third plot we will show AI 1 as a function of AI 0
+            plot(obj.axis_C, zeros(round(obj.taskA.sampleRate*obj.taskA.updatePeriod),1),'.-')
 
             %Make plots look nice
-            obj.axis_A.XLabel.String='Voltage (V)';
-            obj.axis_A.YLabel.String='Samples';
+            obj.axis_A.YLabel.String='Voltage (V)';
+            obj.axis_A.XLabel.String='Samples';
 
-            obj.axis_B.XLabel.String='Voltage (V)';
-            obj.axis_B.YLabel.String='Samples';
+            obj.axis_B.YLabel.String='Voltage (V)';
+            obj.axis_B.XLabel.String='';
+            obj.axis_B.XTickLabel=[];
 
-            % Set properties of both axes together
-            set([obj.axis_A,obj.axis_B], 'Box', 'On', 'XGrid', 'On', 'YGrid', 'On', 'YLim', [obj.minVoltage,obj.maxVoltage])
-            set(obj.axis_B, 'XLim', [obj.minVoltage,obj.maxVoltage])
+            % Set properties of axes together
+            set([obj.axis_A,obj.axis_B], 'Box', 'On', 'XGrid', 'On', 'YGrid', 'On', 'YLim', [obj.taskA.minVoltage,obj.taskA.maxVoltage])
+            set(obj.axis_C, 'XLim', [obj.taskA.minVoltage,obj.taskA.maxVoltage])
 
-            obj.taskA=vidrio.sync.sine_AO_AI(DAQ_ID_A);
-            obj.taskB=vidrio.sync.sine_AO_AI(DAQ_ID_B);
+
+
 
             
-            addlistener(obj.taskA,'acquiredData', @obj.plotIt(src,eventData)); %TODO: confirm that's valic
+            addlistener(obj.taskA,'acquiredData', 'PostSet', @(src,eventData) obj.plotIt(src,eventData) );
 
 
             obj.taskA.startAcquisition;
@@ -77,26 +84,27 @@ classdef phaseMonitor < handle
         function delete(obj)
             delete(obj.taskA)
             delete(obj.taskB)
+            delete(obj.hFig)
         end %close destructor
 
 
         function plotIt(obj,src,eventData)
+
+            AIdata=eventData.AffectedObject.acquiredData; %Get the data
             %We keep the plot objects the same and just change their data properties
             C=get(obj.axis_A, 'Children');
-            C(1).YData=inData(:,1);
-            C(2).YData=inData(:,2);
+            C(1).YData=AIdata(:,1);
 
             C=get(obj.axis_B, 'Children');
-            C.XData=inData(:,1);
-            C.YData=inData(:,2);
+            C.YData=AIdata(:,2);
 
-        end %close readAndPlotData
+            C=get(obj.axis_C, 'Children');
+            C.YData=AIdata(:,1);
+            C.YData=AIdata(:,2);
+        end %close plotIt
 
 
         function windowCloseFcn(obj,~,~)
-            % This runs when the user closes the figure window or if there is an error
-            % Note it's also possible to run a clean-up callback function with hTask.registerDoneEvent
-
             fprintf('You closed the window. Shutting down DAQ.\n')
             obj.delete % simply call the destructor
         end %close windowCloseFcn
