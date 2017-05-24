@@ -65,7 +65,7 @@ function hardwareContinuousVoltage
         hTask.createAIVoltageChan(devName, physicalChannels, [], minVoltage, maxVoltage);
 
 
-        % * Configure the sampling rate and the number of samples
+        % * Configure the sampling rate and the size of the buffer in samples
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/

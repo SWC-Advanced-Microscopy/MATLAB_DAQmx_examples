@@ -71,7 +71,7 @@ classdef simpleOOexample < handle
     % For example, our simple scanning software (https://github.com/tenss/SimpleMScanner) contains
     % classes that inherit handle. 
     %
-    % For those already familiar with "references: objects that inherit handle return a *reference* 
+    % For those already familiar with "references": objects that inherit handle return a *reference* 
     % to the object after construction. So you can pass a copy of the reference to another function 
     % and have it modify it without creating a new copy of the object that controls the DAQ. 
     % The handle class also allows us to create notifiers and listeners:
