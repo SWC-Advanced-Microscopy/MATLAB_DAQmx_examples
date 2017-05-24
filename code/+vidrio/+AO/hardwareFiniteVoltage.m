@@ -54,7 +54,7 @@ function hardwareFiniteVoltage
     sampleRate = 1000;                  % Sample Rate in Hz
 
     % Build one cycle of a sine wave to play through the AO line (note the transpose)
-    waveForm=sin(linspace(-pi,pi, sampleRate))';
+    waveForm = sin(linspace(-pi,pi, sampleRate))';
     numSamplesPerChannel = length(waveForm) ;   % The number of samples to be stored in the buffer per channel
 
 

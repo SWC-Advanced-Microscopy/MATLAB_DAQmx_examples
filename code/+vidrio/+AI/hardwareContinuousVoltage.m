@@ -25,9 +25,10 @@ function hardwareContinuousVoltage
     % 
     % Also see:
     % Vidrio example: dabs.ni.daqmx.demos.AnalogInput.Voltage_Continuous_Input
-    % The following two examples are similar but use a callback function to plot the data
+    % The following examples are similar but use a callback function to plot the data:
     % TMW DAQ Toolbox example: daqtoolbox.AI.analogInput_Continuous
     % ANSI C: DAQmx_ANSI_C_examples/AI/ContAcq-IntClk.c 
+    % vidrio.AI.hardwareContinuousVoltageWithCallBack
     % PyDAQmx: https://pythonhosted.org/PyDAQmx/callback.html
 
 
@@ -76,7 +77,7 @@ function hardwareContinuousVoltage
         hTask.start
 
 
-        fprintf('Recoding data on %s. Hit ctrl-C to stop.\n', devName);
+        fprintf('Recording data on %s. Hit ctrl-C to stop.\n', devName);
         clf 
         while 1
             % readAnalogData returns once 500 samples have been acquired or the 5 second timeout is reached

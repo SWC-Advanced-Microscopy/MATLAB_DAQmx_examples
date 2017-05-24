@@ -28,7 +28,7 @@ function hardwareContinuousVoltageWithCallBack
 
 
     % Parameters for the acquisition (device and channels)
-    devName = 'scan';       % the name of the DAQ device as shown in MAX
+    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
     taskName = 'hardAI';    % A string that will provide a label for the task
     physicalChannels = 0:3; % A scalar or an array with the channel numbers
     minVoltage = -0.5;       % Channel input range minimum
