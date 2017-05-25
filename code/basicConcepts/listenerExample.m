@@ -56,7 +56,7 @@ classdef listenerExample < handle
 
         function populateProperty(obj)
             obj.exampleProperty = randn(1,60);
-            notify(obj,'examplePropertyPopulated')
+            notify(obj,'examplePropertyPopulated') %This causes the notifier to "fire"
         end %close populateProperty
 
 
