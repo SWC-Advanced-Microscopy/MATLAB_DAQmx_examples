@@ -41,7 +41,8 @@ function anonymousFunctionExample
     clf
     n=3;
     plot(sinWave(n))
-    title(sprintf('%d cycles of a sine wave',n))
+    title(sprintf('%d cycles of a sine wave',n)) 
+    %Help on sprintf formating info: https://www.mathworks.com/help/matlab/ref/sprintf.html
     set(gca,'XTickLabel',[],'YTickLabel',[])
     grid
 
