@@ -47,7 +47,7 @@ To use the triggers, wire up the rack so that the two PFI0 ports are connected. 
 Then start the tasks:
 
 ```
->> B.startAcquisition;R.startAcquisition;
+>> B.startAcquisition; R.startAcquisition;
 ```
 
 Nothing happens on the scope until you hook up PFI0 (e.g. with your T connector) to +5 (the breakout box provides this).
@@ -74,7 +74,7 @@ If your cards are in a PXI chassis or linked by an RTSI cable then you simply te
 ```
 % Ensure the stopAcquisition methods have been run.
 >> B.hAOTask.cfgSampClkTiming(B.sampleRate,'DAQmx_Val_ContSamps', size(B.waveform,1), ['/',R.DAQdevice,'/ao/SampleClock'])
->> B.startAcquisition;R.startAcquisition;
+>> B.startAcquisition; R.startAcquisition;
 ```
 
 Then trigger. 
@@ -93,7 +93,7 @@ Next we set the other DAQ to import a clock on PFI1 (we're using PFI0 for the st
 Wire up your DAQ remembering to use PF1 not digital port 1 on line 0.
 ```
 >> B.hAOTask.cfgSampClkTiming(B.sampleRate,'DAQmx_Val_ContSamps', size(B.waveform,1), 'PFI1')
->> B.startAcquisition;R.startAcquisition;
+>> B.startAcquisition; R.startAcquisition;
 ```
 
 Nice synchronised waveforms!
