@@ -46,7 +46,7 @@ function hardwareContinuousVoltage
     % Task configuration
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
                                         % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-    sampleRate = 5000;                  % Sample Rate in Hz
+    sampleRate = 10E3;                  % Sample Rate in Hz
     numSamplesPerChannel = sampleRate*2 ; % The number of samples to be stored in the buffer per channel
 
 
