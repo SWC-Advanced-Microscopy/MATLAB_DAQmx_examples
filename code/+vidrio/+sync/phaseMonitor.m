@@ -88,8 +88,11 @@ classdef phaseMonitor < handle
             obj.axis_C.YLabel.String=[obj.taskB.DAQdevice, ' Voltage (V)'];
 
             % Set properties of axes together
-            set([obj.axis_A,obj.axis_B,obj.axis_C], 'Box', 'On', 'XGrid', 'On', 'YGrid', 'On', 'YLim', [obj.taskA.minVoltage,obj.taskA.maxVoltage], 'XLim',[0,obj.minPointsToPlot])
-            
+            set([obj.axis_A,obj.axis_B,obj.axis_C], 'Box', 'On', 'XGrid', 'On', 'YGrid', 'On', ...
+                'YLim', [obj.taskA.minVoltage,obj.taskA.maxVoltage], 'XLim',[0,obj.minPointsToPlot])
+
+            set(obj.axis_C, 'XLim', [obj.taskA.minVoltage,obj.taskA.maxVoltage])
+
             addlistener(obj.taskA,'acquiredData', 'PostSet', @(src,eventData) obj.plotIt(src,eventData) );
 
 
@@ -106,12 +109,17 @@ classdef phaseMonitor < handle
         end %close destructor
 
 
-        function plotIt(obj,src,eventData)
+        function plotIt(obj,~,eventData)
 
             AIdata=eventData.AffectedObject.acquiredData; %Get the data
 
             %lock to the first upward 0 V crossing
-            tmp=smooth(AIdata(:,1));
+            if exist('smooth','builtin')
+                tmp=smooth(AIdata(:,1));
+            else
+                % Hope smoothing isn't necessary if the tlbx is missing
+                tmp=AIdata(:,1);
+            end
             tmp=round(tmp,2);
             f=find(tmp(1:end-1,1)==0 & diff(tmp(:,1))>0 );
             if isempty(f)
