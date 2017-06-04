@@ -14,9 +14,13 @@ function AOandAI
     %    vidrio.AO.hardwareContinuousVoltage
     %
     %    Note that in this example the AI and AO do not share a clock. They are set to run at 
-    %    at the same rate, but they won't be running on the same clock. This can create jitter 
-    %    and, for some desired sample rates, continuously variable phase delays. See: 
+    %    at the same sample rate, but they won't be running on the same clock. This can create 
+    %    jitter and, for some desired sample rates, continuously variable phase delays. See: 
     %    vidrio.mixed.AOandAI_OO_sharedClock
+    %
+    %
+    % Wiring instructions:
+    % connect AI0 to AO0 on the DAQ device you are working on. 
     %
     %
     % Demonstrated steps:
@@ -47,10 +51,10 @@ function AOandAI
     % Basic AO digital triggering: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
     % AO and AI with a class rather than a functio: vidrio.mixed.AOandAI_OO
 
-    AIDevice = 'Dev1';
+    DAQdevice = 'Dev1';
+
     AIChans = 0; 
     AIterminalConfig = 'DAQmx_Val_Cfg_Default'; %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
-    AODevice = 'Dev1';
     AOChan = 0; 
 
     minVoltage = -10;
@@ -83,8 +87,8 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan" and "help dabs.ni.daqmx.Task.createAIVoltageChan"
         %   C equivalent - DAQmxCreateAOVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
-        hAITask.createAIVoltageChan(AIDevice, AIChans, [], minVoltage, maxVoltage, [], [], AIterminalConfig);
-        hAOTask.createAOVoltageChan(AODevice, AOChan);
+        hAITask.createAIVoltageChan(DAQdevice, AIChans, [], minVoltage, maxVoltage, [], [], AIterminalConfig);
+        hAOTask.createAOVoltageChan(DAQdevice, AOChan);
 
 
         %--------------------------------------------------------------------------------
@@ -130,7 +134,7 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.cfgDigEdgeStartTrig"
         %   DAQmxCfgDigEdgeStartTrig
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgdigedgestarttrig/
-        hAOTask.cfgDigEdgeStartTrig(['/',AIDevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising')
+        hAOTask.cfgDigEdgeStartTrig(['/',DAQdevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising')
         
         hAOTask.start();
         hAITask.start();
