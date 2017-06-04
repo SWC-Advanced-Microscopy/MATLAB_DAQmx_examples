@@ -41,7 +41,7 @@ classdef AOandAI_OO_sharedClock < handle
         %Properties for the analog input end of things
         hAITask %The AI task will be kept here
         AIChans = 0:1 
-        AIterminalConfig = 'DAQmx_Val_RSE' %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
+        AIterminalConfig = 'DAQmx_Val_Cfg_Default' %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
 
         %Properties for the analog output end of things
         hAOTask %The AO task will be kept here
