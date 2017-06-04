@@ -44,15 +44,15 @@ classdef AOandAI_OO < handle
 
     % Define properties that we will use for the acquisition 
     properties
+        DAQdevice = 'Dev1'
+
         %Properties for the analog input end of things
         hAITask %The AI task will be kept here
-        AIDevice = 'Dev1'
         AIChans = 0:1 
         AIterminalConfig = 'DAQmx_Val_RSE' %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
 
         %Properties for the analog output end of things
         hAOTask %The AO task will be kept here
-        AODevice = 'Dev1'
         AOChans = 0:1
 
         % Shared properties
@@ -147,8 +147,8 @@ classdef AOandAI_OO < handle
                 obj.hAOTask = dabs.ni.daqmx.Task('mixedAO');
 
                 %  Set up analog input and output voltage channels
-                obj.hAITask.createAIVoltageChan(obj.AIDevice, obj.AIChans, [], obj.minVoltage, obj.maxVoltage, [], [], obj.AIterminalConfig);
-                obj.hAOTask.createAOVoltageChan(obj.AODevice, obj.AOChans);
+                obj.hAITask.createAIVoltageChan(obj.DAQdevice, obj.AIChans, [], obj.minVoltage, obj.maxVoltage, [], [], obj.AIterminalConfig);
+                obj.hAOTask.createAOVoltageChan(obj.DAQdevice, obj.AOChans);
 
 
                 % * Set up the AI task
@@ -173,7 +173,7 @@ classdef AOandAI_OO < handle
                 obj.hAOTask.writeAnalogData(obj.waveforms, 5)
 
                 % Configure the AO task to start as soon as the AI task starts
-                obj.hAOTask.cfgDigEdgeStartTrig(['/',obj.AIDevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising');
+                obj.hAOTask.cfgDigEdgeStartTrig(['/',obj.DAQdevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising');
             catch ME
                     daqDemosHelpers.errorDisplay(ME)
                     %Tidy up if we fail

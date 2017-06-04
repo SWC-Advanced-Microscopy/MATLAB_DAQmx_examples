@@ -36,15 +36,15 @@ classdef AOandAI_OO_sharedClock < handle
 
     % Define properties that we will use for the acquisition 
     properties
+        DAQdevice = 'Dev1'
+
         %Properties for the analog input end of things
         hAITask %The AI task will be kept here
-        AIDevice = 'Dev1'
         AIChans = 0:1 
         AIterminalConfig = 'DAQmx_Val_RSE' %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
 
         %Properties for the analog output end of things
         hAOTask %The AO task will be kept here
-        AODevice = 'Dev1'
         AOChans = 0:1
 
         % Shared properties
@@ -141,8 +141,8 @@ classdef AOandAI_OO_sharedClock < handle
                 obj.hAOTask = dabs.ni.daqmx.Task('mixedAO');
 
                 %  Set up analog input and output voltage channels
-                obj.hAITask.createAIVoltageChan(obj.AIDevice, obj.AIChans, [], obj.minVoltage, obj.maxVoltage, [], [], obj.AIterminalConfig);
-                obj.hAOTask.createAOVoltageChan(obj.AODevice, obj.AOChans);
+                obj.hAITask.createAIVoltageChan(obj.DAQdevice, obj.AIChans, [], obj.minVoltage, obj.maxVoltage, [], [], obj.AIterminalConfig);
+                obj.hAOTask.createAOVoltageChan(obj.DAQdevice, obj.AOChans);
 
 
                 % * Set up the AI task
@@ -150,7 +150,7 @@ classdef AOandAI_OO_sharedClock < handle
                 % Configure the sampling rate and the buffer size
                 % ===> SET UP THE SHARED CLOCK: Use the AO sample clock for the AI task <===
                 % The supplied sample rate for the AI task is a nominal value. It will in fact use the AO sample clock. 
-                obj.hAITask.cfgSampClkTiming(obj.sampleRateAO, 'DAQmx_Val_ContSamps', [], ['/',obj.AODevice,'/ao/SampleClock']);
+                obj.hAITask.cfgSampClkTiming(obj.sampleRateAO, 'DAQmx_Val_ContSamps', [], ['/',obj.DAQdevice,'/ao/SampleClock']);
 
                 % Read back the data with a callback function at an interval defined by updatePeriod
                 % Also see: basicConcepts/anonymousFunctionExample.
@@ -169,7 +169,7 @@ classdef AOandAI_OO_sharedClock < handle
                 obj.hAOTask.writeAnalogData(obj.waveforms, 5)
 
                 % Configure the AO task to start as soon as the AI task starts
-                obj.hAOTask.cfgDigEdgeStartTrig(['/',obj.AIDevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising');
+                obj.hAOTask.cfgDigEdgeStartTrig(['/',obj.DAQdevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising');
             catch ME
                     daqDemosHelpers.errorDisplay(ME)
                     %Tidy up if we fail
