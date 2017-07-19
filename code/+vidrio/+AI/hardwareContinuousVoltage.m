@@ -55,7 +55,7 @@ function hardwareContinuousVoltage(fname)
     end
 
     % Parameters for the acquisition (device and channels)
-    devName = 'PXI1Slot3';       % the name of the DAQ device as shown in MAX
+    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
     taskName = 'hardAI';    % A string that will provide a label for the task
     physicalChannels = 0:3; % A scalar or an array with the channel numbers
     minVoltage = -10;       % Channel input range minimum
