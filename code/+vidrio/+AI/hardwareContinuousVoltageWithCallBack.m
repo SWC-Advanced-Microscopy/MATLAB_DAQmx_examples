@@ -53,7 +53,7 @@ function hardwareContinuousVoltageWithCallBack
         % * Set up analog inputs on device defined by variable devName
         %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan"
         %   C equivalent - DAQmxCreateAOVoltageChan
-        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
+        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaivoltagechan/
         hTask.createAIVoltageChan(devName, physicalChannels, [], minVoltage, maxVoltage);
 
 

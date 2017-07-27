@@ -61,7 +61,7 @@ function hardwareFiniteVoltage
 
         % * Set up analog input 0 on device defined by variable devName
         %   More details at: "help dabs.ni.daqmx.Task.createAIVoltageChan"
-        %   It's is also valid to use device and channel only: e.g. "hTask.createAIVoltageChan(‘Dev1’,0);"
+        %   It's is also valid to use device and channel only: e.g. "hTask.createAIVoltageChan('Dev1',0);"
         %   C equivalent - DAQmxCreateAIVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaivoltagechan/
         hTask.createAIVoltageChan(devName,physicalChannels,[],minVoltage,maxVoltage);
