@@ -50,7 +50,7 @@ function hardwareContinuousVoltageWithCallBack
         hTask = dabs.ni.daqmx.Task(taskName); 
 
 
-        % * Set up analog output 0 on device defined by variable devName
+        % * Set up analog inputs on device defined by variable devName
         %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan"
         %   C equivalent - DAQmxCreateAOVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
