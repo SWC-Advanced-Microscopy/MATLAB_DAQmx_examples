@@ -73,6 +73,9 @@ function hardwareContinuousVoltage(fname)
         formatStr = repmat('%0.5f,',1,length(physicalChannels));
         formatStr(end)=[];
         formatStr=[formatStr,'\n'];
+        fid=fopen(fname,'w+');
+    else
+            fid=-1;
     end
 
 
@@ -84,7 +87,7 @@ function hardwareContinuousVoltage(fname)
         hTask = dabs.ni.daqmx.Task(taskName); 
 
 
-        % * Set up analog output 0 on device defined by variable devName
+        % * Set up analog inputs on device defined by variable devName
         %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan"
         %   C equivalent - DAQmxCreateAOVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
@@ -105,12 +108,6 @@ function hardwareContinuousVoltage(fname)
 
         fprintf('Recording data on %s. Hit ctrl-C to stop.\n', devName);
         clf 
-
-        if ~isempty(fname)
-            fid=fopen(fname,'w+');
-        else
-            fid=-1;            
-        end
 
         while 1
             % readAnalogData returns once 500 samples have been acquired or the 5 second timeout is reached
