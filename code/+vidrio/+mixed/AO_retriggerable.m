@@ -109,12 +109,12 @@ function AO_retriggerable
         %   Set task as retriggerable       
         hTask.cfgDigEdgeStartTrig(triggerChannel,'DAQmx_Val_Rising');
         hTask.set('startTrigRetriggerable',1);
-        
+
         % * Write the waveform to the buffer with a 5 second timeout in case it fails
         %   More details at: "help dabs.ni.daqmx.Task.writeAnalogData"
         %   Writes doubles using DAQmxWriteAnalogF64
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxwriteanalogf64/
-        hTask.writeAnalogData(sawtooth,false); % false = no autostart
+        hTask.writeAnalogData(sawtooth,[],false); % false = no autostart
 
 
         % Start the task and wait until it is complete. Task starts and
