@@ -98,3 +98,7 @@ If they do not:
 * [Calling the DAQmx dll directly from Python and Perl](http://www.ni.com/white-paper/8911/en/)
 * For ANSI C examples look in `C:\Users\Public\Documents\National Instruments\NI-DAQ\Examples`
 * You can find side-by-side examples of how DAQmx works in different languages [here](http://www.ni.com/product-documentation/2835/en/).
+
+### Projects using the Vidrio DAQmx wrapper
+* [ScanImage Tools](https://github.com/BaselLaserMouse/ScanImageTools)
+* [SimpleMScanner](https://github.com/tenss/SimpleMScanner)
