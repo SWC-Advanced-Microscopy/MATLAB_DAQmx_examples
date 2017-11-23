@@ -57,7 +57,7 @@ function varargout=listDeviceIDs(varargin)
 
     % If no devices are connected then say so and quit
     if isempty(devices)
-        fprintf('No NI devices connectes\n');
+        fprintf('No NI devices connected\n');
         if varargout>0
             varargout{1}=[];
         end
