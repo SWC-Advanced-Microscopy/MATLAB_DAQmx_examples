@@ -13,12 +13,11 @@ classdef streamingPlotter < handle
     % This example creates a class that that makes a scrolling line plot on the current 
     % axes. It creates a figure if none exists. The scrolling figure can be modified by 
     % changing its update rate, number of points, and a small number of plot properties. 
-    % See below for examples.
     %
     % 
     % USAGE EXAMPLES
     %
-    % One - create an instance of the class an interact with it:
+    % One - create an instance of the class and interact with it:
     % >> S=streamingPlotter;     
     % >> S.setUpdateInterval(0.03) % Increase the update rate
     % >> S.markerColor='r'; % Set the marker colour to red by changing the value of a class property
