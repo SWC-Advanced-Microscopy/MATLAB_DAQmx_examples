@@ -13,8 +13,8 @@ is provided below. Skip content you understand.
 The following examples show more advanced ways of working with functions. For example, 
 how to end functions in graceful ways and how to call functions using function handles. 
 
-trappingErrors.m         -  Demonstrates the use of try/catch for trapping errors
-nestedFunctionExample.m  -  Shows how nested functions work in MATLAB.
+trappingErrors           -  Demonstrates the use of try/catch for trapping errors
+nestedFunctionExample    -  Shows how nested functions work in MATLAB.
 cleanUp                  -  how to run arbitrary code when your function ends (includes nested 
                             functions and try/catch blocks).
 anonymousFunctionExample -  How to use anonymous functions and function handles in MATLAB.
