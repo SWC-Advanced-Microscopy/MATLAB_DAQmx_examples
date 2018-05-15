@@ -32,7 +32,7 @@ classdef simpleOOexample < handle
     % Properties for class simpleOOexample:
     %    exampleProperty
     %
-    % Confirm that EG has three properties:
+    % Confirm that EG has three methods:
     % >> methods(EG)
     % Methods for class simpleOOexample:
     % displayProperty  plotProperty   simpleOOexample  
