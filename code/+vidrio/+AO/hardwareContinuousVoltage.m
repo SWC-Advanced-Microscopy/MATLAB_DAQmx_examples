@@ -7,7 +7,7 @@ function hardwareContinuousVoltage
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
     % internal (on-board) sample clock. The example uses no triggers. The waveform is regenerated 
-    % continuously.
+    % continuously using a callback function.
     %
     %
     % Monitoring the output
@@ -46,7 +46,7 @@ function hardwareContinuousVoltage
     tidyUp = onCleanup(@cleanUpFunction);
 
     % Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
+    devName = 'Dev1';       % The name of the DAQ device as shown in MAX
     taskName = 'hardAO';    % A string that will provide a label for the task
     physicalChannel = 0;    % A scalar or an array with the channel numbers
     minVoltage = -10;       % Channel input range minimum

@@ -1,12 +1,12 @@
-function hardwareContinuousVoltageNoRegen
+function hardwareContinuousVoltageNoRegen_2chans
     % Example showing hardware-timed continuous analog output without regeneration using the Vidrio dabs.ni.daqmx wrapper
     %
-    % function vidrio.AO.hardwareContinuousVoltageNoRegen
+    % function vidrio.AO.hardwareContinuousVoltageNoRegen_2chans
     %
     % Purpose
-    % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
-    % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
-    % internal (on-board) sample clock. The example uses no triggers. The waveform is not regenerated 
+    % Demonstrates how to do hardware-timed continuous analog output using two channels with Vidrio's 
+    % dabs.ni.daqmx wrapper. This function ouputs continuous sine waves out of AO0 and AO1 using the DAQ's 
+    % internal (on-board) sample clock. The example uses no triggers. The waveforms are not regenerated 
     % continuously from a callback function. 
     %
     %
@@ -35,7 +35,7 @@ function hardwareContinuousVoltageNoRegen
     % Also see:
     % TMW DAQ Toolbox example: *Is non-regenerative AO possible with TMW toolbox*?
     % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Continuous_Output
-    % Same but with two channels: vidrio.AO.hardwareContinuousVoltageNoRegen_2chans
+    % Same but with one channel: vidrio.AO.hardwareContinuousVoltageNoRegen
     % Same but with a digital trigger: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
     % Restrictions on AO tasks: http://digital.ni.com/public.nsf/allkb/2C45C3DC484FF730862570E7007CCBD4?OpenDocument
 
@@ -43,9 +43,9 @@ function hardwareContinuousVoltageNoRegen
     tidyUp = onCleanup(@cleanUpFunction);
 
     % Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % The name of the DAQ device as shown in MAX
+    devName = 'maitai';     % The name of the DAQ device as shown in MAX
     taskName = 'hardAO';    % A string that will provide a label for the task
-    physicalChannel = 0;    % A scalar or an array with the channel numbers
+    physicalChannel = 0:1;  % A scalar or an array with the channel numbers
     minVoltage = -10;       % Channel input range minimum
     maxVoltage = 10;        % Channel input range maximum
 
@@ -54,9 +54,16 @@ function hardwareContinuousVoltageNoRegen
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
                                         % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
     sampleRate = 5000;                  % Sample Rate in Hz
-    waveform=sin(linspace(-pi,pi, sampleRate))'*5; % Build one cycle of a sine wave to play through the AO line. NOTE: column vector
-    numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
 
+    %Build two waveforms to play out of channels 0 and 1. Note that each is a column vector 
+    waveform0=sin(linspace(-pi*25,pi*25, sampleRate))'*5; % Build 25 cycles of a sine wave to play through the AO0 line.
+    waveform1=sin(linspace(-pi,pi, sampleRate))'*5; % Build one cycle of a sine wave to play through the AO1 line.
+
+    
+    % Assemble the two waveforms into an N-by-2 array
+    waveforms = [waveform0,waveform1];
+
+    numSamplesPerChannel = size(waveforms,1) ; % The number of samples to be stored in the buffer per channel
 
     try
         % * Create a DAQmx task
@@ -99,7 +106,7 @@ function hardwareContinuousVoltageNoRegen
         %   More details at: "help dabs.ni.daqmx.Task.writeAnalogData"
         %   Writes doubles using DAQmxWriteAnalogF64
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxwriteanalogf64/
-        hTask.writeAnalogData(waveform, 5)
+        hTask.writeAnalogData(waveforms, 5)
 
 
         % Start the task and wait until it is complete. Task starts right away
@@ -107,7 +114,7 @@ function hardwareContinuousVoltageNoRegen
         hTask.start
 
 
-        fprintf('Playing sine wave out of %s AO %d. Hit ctrl-C to stop.\n', devName, physicalChannel);
+        fprintf('Playing sine waves out of %s AO%d and AO%d. Hit ctrl-C to stop.\n', devName, physicalChannel);
         % Output continues for as long as the following while loop runs
         while 1
             hTask.isTaskDone; % Checks for errors
