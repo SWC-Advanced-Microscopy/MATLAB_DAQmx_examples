@@ -48,22 +48,22 @@ function varargout=listDeviceIDs(varargin)
     %Start a task and attempt to read device names
     hNI=dabs.ni.daqmx.System;
 
-    try
-        devices = strsplit(hNI.devNames, ', ');
-    catch ME
-        rethrow(ME)
-    end
-
 
     % If no devices are connected then say so and quit
-    if isempty(devices)
+    if isempty(hNI.devNames)
         fprintf('No NI devices connected\n');
-        if varargout>0
+        if nargout>0
             varargout{1}=[];
         end
         return
     end
 
+
+    try
+        devices = strsplit(hNI.devNames, ', ');
+    catch ME
+        rethrow(ME)
+    end
 
     % If the user supplied an input argument, test of a device was present and quit.
     if nargin>0
