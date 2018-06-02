@@ -14,10 +14,9 @@ function cleanUp
     % control. Say your function is communicating with a nuclear-powered toaster 
     % over a serial port. Since the device is dangerous, you want to ensure that
     % it's put into a safe state before the function ends (even if it ends in a
-    % way that was predictable). Clean-up functions are just the ticket in this
+    % way that was unpredictable). Clean-up functions are just the ticket in this
     % sort of scenario. You will see clean-up functions in all the Vidrio DAQmx
     % examples in this repository. 
-    %
     %
     %
     % Rob Campbell - Basel 2016
@@ -38,29 +37,6 @@ function cleanUp
         pause(0.5)
         fprintf('.')
         n=n+1;
-    end
-
-
-    %NOTE: the cleanup function will also run on an error if you use a try/catch block
-    %      (see trappingErrors.m) like this:
-
-    %Option one:
-    try
-        %stuff  happens
-        x=1; %Doesn't generate an error
-    catch ME %See: https://www.mathworks.com/help/matlab/matlab_prog/capture-information-about-errors.html
-        %Like this the clean-up function is run (call it explicitly then rethrow)
-        cleanUpFunction
-        rethrow(ME) %https://www.mathworks.com/help/matlab/ref/rethrow.html
-    end
-
-    %Option two:
-    try
-        %stuff  happens
-        x=1; %Doesn't generate an error
-    catch ME %See: https://www.mathworks.com/help/matlab/matlab_prog/capture-information-about-errors.html
-        %Here we only show the message, so the clean-up function will run as normal
-        disp(ME.message) 
     end
 
 
