@@ -1,4 +1,4 @@
-classdef listenerExample < handle
+classdef listenerExample < handle %The class "listenerExample" inherits the built-in class "handle"
 
     % This file defines a simple example class called "listenerExample"
     %
@@ -12,30 +12,29 @@ classdef listenerExample < handle
     %
     %
     % Purpose
-    % Shows how to set up a listener and a notifier in an object. These features
-    % are inherited from the abstract class handle. Listeners, notifiers, and 
-    % callback functions are very commonly used in DAQ tasks and GUI building.
+    % Shows how to set up a listener on an observable property. This is the most simple way 
+    % to cause function to run automatically when data are modified. 
+    %
+    % It is also possible to run callback functions when a "notifier" fires:
+    % https://www.mathworks.com/help/matlab/ref/handle.notify.html
+    %
+    % Notifiers and listeners are "inherited" from the abstract class "handle". 
+    % Listeners, notifiers, and callback functions are very commonly used in DAQ tasks and GUI building.
     %
     % 
     % To run this example:
     % >> L = listenerExample
     % >> L.populateProperty %refreshes the data and uses a listener/notifier to re-plot
-    %
+    % >> L.exampleProperty=rand(1,30); %does the same thing
     %
     %
     % Rob Campbell - Basel 2016
 
 
 
-    properties %open properties block
+    properties (SetObservable) %open properties block and make them observable
         exampleProperty %declare exampleProperty but don't populate it with anything
     end %close properties block
-
-
-    events %open event definition block
-        %Declare a notifier. This will be hit each time the exampleProperty property is refreshed with new example data
-        examplePropertyPopulated
-    end %close event definition block
 
 
     methods %open method definition block
@@ -44,19 +43,20 @@ classdef listenerExample < handle
             obj.populateProperty %fill example property with random numbers
 
             %add a listener that plots the contents of exampleProperty when it has been updated
-            addlistener(obj,'examplePropertyPopulated', @(src,eventData) obj.plotIt(src,eventData)); 
+            addlistener(obj,'exampleProperty', 'PostSet', @(src,eventData) obj.plotIt(src,eventData)); 
 
             % In the case above, we pass the source object and the event object. These aren't used for anything
             % here, but I show the full form above. If you wanted to ignore them, you could just do:
             %   addlistener(obj,'examplePropertyPopulated', @(~,~) obj.plotIt); 
             %  or:
             %   addlistener(obj,'examplePropertyPopulated', @obj.plotIt); 
+
+            obj.plotIt
         end %close listenerExample constructor
 
 
         function populateProperty(obj)
             obj.exampleProperty = randn(1,60);
-            notify(obj,'examplePropertyPopulated') %This causes the notifier to "fire"
         end %close populateProperty
 
 
