@@ -43,7 +43,7 @@ function hardwareContinuousVoltageNoRegen_2chans
     tidyUp = onCleanup(@cleanUpFunction);
 
     % Parameters for the acquisition (device and channels)
-    devName = 'maitai';     % The name of the DAQ device as shown in MAX
+    devName = 'Dev1';     % The name of the DAQ device as shown in MAX
     taskName = 'hardAO';    % A string that will provide a label for the task
     physicalChannel = 0:1;  % A scalar or an array with the channel numbers
     minVoltage = -10;       % Channel input range minimum
