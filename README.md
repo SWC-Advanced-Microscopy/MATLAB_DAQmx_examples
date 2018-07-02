@@ -93,6 +93,7 @@ If they do not:
 * See [SimpleMScanner](https://github.com/tenss/SimpleMScanner) for basic 2-photon scanning software written using the techniques shown here. 
 
 ### DAQmx in other languages
+* [Official Python NI DAQmx examples from NI](https://github.com/ni/nidaqmx-python/tree/master/nidaqmx_examples)
 * [PyDAQmx](https://pythonhosted.org/PyDAQmx/index.html)
 * A [wrapper for PyDAQmx](https://github.com/petebachant/daqmx)
 * [Calling the DAQmx dll directly from Python and Perl](http://www.ni.com/white-paper/8911/en/)
