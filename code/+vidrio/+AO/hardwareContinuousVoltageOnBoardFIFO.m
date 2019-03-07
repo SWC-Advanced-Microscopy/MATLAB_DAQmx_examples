@@ -94,8 +94,9 @@ function hardwareContinuousVoltageOnBoardFIFO
         %   playback of the sine wave.
         %
         % http://zone.ni.com/reference/en-XX/help/370473J-01/ninetdaqmxfx40ref/html/p_nationalinstruments_daqmx_aochannel_useonlyonboardmemory/
-        hTask.channels.set('useOnlyOnBrdMem',true) % <------------------------------
-
+        hTask.channels.set('useOnlyOnBrdMem',true) % <-- implements FIFO only
+        
+        
         % * Set the size of the output buffer
         %   You DO NOT need to set the buffer size here as DAQmxCfgOutputBuffer
         %   effects only the PC buffer, which we are not using
