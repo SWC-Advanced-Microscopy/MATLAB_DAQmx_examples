@@ -78,7 +78,7 @@ function hardwareContinuousVoltageOnBoardFIFO
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-        hTask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps',numSamplesPerChannel,sampleClockSource);
+        hTask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps',length(waveform),sampleClockSource);
 
 
         % * Do not allow sample regeneration
