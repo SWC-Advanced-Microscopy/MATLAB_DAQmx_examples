@@ -126,9 +126,9 @@ classdef streamingPlotter < handle
         function setUpdateInterval(obj,updateInterval)
             % Changes the update interval of the plot
             %
-            % streamingPlotter.setUpdateInterval(intervalInSeconds)
+            % streamingPlotter.setUpdateInterval(updateInterval)
             %
-            % intervalInSeconds - time between plot update events in seconds. 
+            % updateInterval - time between plot update events in seconds. 
 
             % You could also do this with a dependent property (that would be the advanced approach):
             % https://www.mathworks.com/help/matlab/matlab_oop/access-methods-for-dependent-properties.html
