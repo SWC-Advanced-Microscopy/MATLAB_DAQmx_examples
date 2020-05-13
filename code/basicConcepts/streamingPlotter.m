@@ -166,4 +166,4 @@ classdef streamingPlotter < handle
     end %close hidden methods block
 
 
-end %close simpleOOexample classdef
+end %close streamingPlotter classdef
