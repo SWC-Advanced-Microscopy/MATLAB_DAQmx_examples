@@ -29,7 +29,7 @@ function softwareBasic
 
     try
 
-        % * Create two DAQmx tasks: One task has one line and the other has multiple lines
+        % * Create three DAQmx tasks: One task will have one line and the others will have multiple lines
         %   More details at: "help dabs.ni.daqmx.Task"
         %   C equivalent - DAQmxCreateTask 
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
