@@ -79,7 +79,7 @@ function softwareBasic
         % Unlike the previous task we here use a row vector. This is because
         % we are writing all samples to a single logical channel. In hDO(2)
         % it was two logical channels. 
-        % NOTE: it's also possible to supply this input as binary notation, but this appears to require a running taskk
+        % NOTE: it's also possible to supply this input as binary notation, but this appears to require a running task
         hDO(3).writeDigitalData([0;1;0]);
         pause(1)
         hDO(3).writeDigitalData([0;0;0] );
