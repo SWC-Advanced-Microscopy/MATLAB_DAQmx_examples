@@ -12,7 +12,7 @@ function softwareBasic
     % Demonstrated steps:
     %    1. Create three tasks.
     %    2. Create DO channels in three different ways to show all the available options.
-    %    3. Write digital values on at a time to these lines. 
+    %    3. Write digital values one at a time to these lines. 
     %    4. Clear the task
     %    5. Display an error if any.
     %
