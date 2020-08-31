@@ -7,8 +7,7 @@ function hardwareContinuousVoltageOnBoardFIFO
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
     % internal (on-board) sample clock. The example uses no triggers. The waveform is regenerated 
-    % continuously from the FIFO buffer on the board. i.e. NO transfer from
-    % PC during sine wave generation.
+    % continuously from the FIFO buffer on the board. i.e. NO transfer from PC during sine wave generation.
     %
     %
     % Monitoring the output
