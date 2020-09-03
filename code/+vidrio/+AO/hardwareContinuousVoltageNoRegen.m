@@ -6,9 +6,10 @@ function hardwareContinuousVoltageNoRegen
     % Purpose
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
-    % internal (on-board) sample clock. The example uses no triggers. The waveform is not regenerated 
-    % continuously from a callback function. 
-    %
+    % internal (on-board) sample clock. The example uses no triggers. The waveform data is written to the
+    % buffer at intervals using a callback funtion. In other words, there is no "regeneration". 
+    % If regeneration were enabled, data written to either the user buffer or the FIFO would be reused by 
+    % the DAQ device to produce the waveform.
     %
     % Monitoring the output
     % If you lack an oscilloscope you may physically connect the analog output to 
@@ -53,10 +54,12 @@ function hardwareContinuousVoltageNoRegen
     % Task configuration
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
                                         % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-    sampleRate = 5000;                  % Sample Rate in Hz
-    waveform=sin(linspace(-pi,pi, sampleRate))'*5; % Build one cycle of a sine wave to play through the AO line. NOTE: column vector
+    sampleRate = 500;                  % Sample Rate in Hz
+    waveform=sin(linspace(-pi,pi, sampleRate*2))'*5; % Build one cycle of a sine wave to play through the AO line. NOTE: column vector
     numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
-
+    bufferSize = numSamplesPerChannel * 2;
+    fprintf('Waveform length: %d\nSample rate: %d\nBuffer size: %d\n', ....
+        numSamplesPerChannel, sampleRate, bufferSize)
 
     try
         % * Create a DAQmx task
@@ -73,33 +76,47 @@ function hardwareContinuousVoltageNoRegen
         hTask.createAOVoltageChan(devName, physicalChannel, [], minVoltage, maxVoltage);
 
 
+        % * Disable sample regeneration
+        %  When regeneration is enabled, data written to either the user buffer or the FIFO is reused by the 
+        % DAQ device to produce the waveform. 
+        % https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019P1kSAE&l=en-GB 
+        % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
+        % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
+        hTask.set('writeRegenMode','DAQmx_Val_DoNotAllowRegen');
+
+
         % * Configure the sampling rate and the number of samples
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
+        %
+        % Note that in the following line the number of samples per channel does not determine 
+        % the buffer size for an output operation but is the total number of samples to generate.
+        % See: http://zone.ni.com/reference/en-XX/help/370466AD-01/mxcncpts/buffersize/
         hTask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps',numSamplesPerChannel,sampleClockSource);
-
-
-        % * Allow sample regeneration
-        % When the read buffer becomes empty, the card will just return to the buffer start
-        % and then repeat the same values. 
-        % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
-        % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
-        hTask.set('writeRegenMode','DAQmx_Val_AllowRegen');
-
 
         % * Set the size of the output buffer
         %   More details at: "help dabs.ni.daqmx.Task.cfgOutputBuffer"
         %   C equivalent - DAQmxCfgOutputBuffer
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/
-        hTask.cfgOutputBuffer(numSamplesPerChannel);
+        hTask.cfgOutputBuffer(bufferSize);
 
 
-        % * Write the waveform to the buffer with a 5 second timeout in case it fails
+        % * Call an anonymous function function to top up the buffer when half of the samples
+        %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
+        %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
+        %   This is conceptually similar to the notifier "NotifyWhenScansQueuedBelow" and
+        %   the associated listener in daqtoolbox.AO.analogOutput_Continuous
+        %hTask.registerEveryNSamplesEvent(@(src,~) src.writeAnalogData(waveform,5), floor(numSamplesPerChannel*0.5));
+        hTask.registerEveryNSamplesEvent(@topUpBuffer, 125);
+
+
+
+        % * Write the waveform to the buffer with a 1 second timeout in case it fails
         %   More details at: "help dabs.ni.daqmx.Task.writeAnalogData"
         %   Writes doubles using DAQmxWriteAnalogF64
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxwriteanalogf64/
-        hTask.writeAnalogData(waveform, 5)
+        hTask.writeAnalogData(waveform, 1)
 
 
         % Start the task and wait until it is complete. Task starts right away
@@ -132,5 +149,10 @@ function hardwareContinuousVoltageNoRegen
             fprintf('No task variable present for clean up\n')
         end
     end %close cleanUpFunction
+
+    function topUpBuffer(src,~)
+        disp('**TOPPING UP THE BUFFER**')
+        src.writeAnalogData(waveform, 5)
+    end
 
 end %close hardwareContinuousVoltage
