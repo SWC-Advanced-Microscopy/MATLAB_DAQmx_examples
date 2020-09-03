@@ -1,13 +1,14 @@
-function hardwareContinuousVoltage
+function hardwareContinuousVoltageNoCallback
     % Example showing hardware-timed continuous analog output using the Vidrio dabs.ni.daqmx wrapper
     %
-    % function vidrio.AO.hardwareContinuousVoltage
+    % function vidrio.AO.hardwareContinuousVoltageNoCallback
     %
     % Purpose
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
-    % internal (on-board) sample clock. The example uses no triggers. The waveform is regenerated 
-    % continuously using a callback function.
+    % internal (on-board) sample clock. The example uses no triggers. The waveform is regenerated without
+    % using a callback funciton. When regeneration is enabled, data written to either the user buffer or 
+    % the FIFO is reused by the DAQ device. 
     %
     %
     % Monitoring the output
@@ -88,7 +89,7 @@ function hardwareContinuousVoltage
         % and re-output the same values. 
         % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
         % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
-        hTask.set('writeRegenMode','DAQmx_Val_DoNotAllowRegen');
+        hTask.set('writeRegenMode','DAQmx_Val_AllowRegen');
 
 
         % * Set the size of the output buffer
@@ -103,14 +104,6 @@ function hardwareContinuousVoltage
         %   Writes doubles using DAQmxWriteAnalogF64
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxwriteanalogf64/
         hTask.writeAnalogData(waveform, 5)
-
-
-        % * Call an anonymous function function to top up the buffer when half of the samples
-        %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
-        %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
-        %   This is conceptually similar to the notifier "NotifyWhenScansQueuedBelow" and
-        %   the associated listener in daqtoolbox.AO.analogOutput_Continuous
-        hTask.registerEveryNSamplesEvent(@(src,~) src.writeAnalogData(waveform,5), floor(numSamplesPerChannel/2));
 
 
         % Start the task and wait until it is complete. Task starts right away since we
