@@ -7,8 +7,8 @@ function hardwareContinuousVoltageNoCallback
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
     % internal (on-board) sample clock. The example uses no triggers. The waveform is regenerated without
-    % using a callback funciton. When regeneration is enabled, data written to either the user buffer or 
-    % the FIFO is reused by the DAQ device. 
+    % using a callback function. When regeneration is enabled, data written to either the user buffer or 
+    % the FIFO is reused by the DAQ device to produce the waveform. 
     %
     %
     % Monitoring the output
@@ -81,12 +81,15 @@ function hardwareContinuousVoltageNoCallback
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
+        %
+        % Note that in the following line the number of samples per channel does not determine 
+        % the buffer size for an output operation but is the total number of samples to generate.
+        % See: http://zone.ni.com/reference/en-XX/help/370466AD-01/mxcncpts/buffersize/
         hTask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps',numSamplesPerChannel,sampleClockSource);
 
 
         % * Do not allow sample regeneration
-        % When the read buffer becomes empty, the card will not return to the start
-        % and re-output the same values. 
+        % https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019P1kSAE&l=en-GB 
         % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
         % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
         hTask.set('writeRegenMode','DAQmx_Val_AllowRegen');
