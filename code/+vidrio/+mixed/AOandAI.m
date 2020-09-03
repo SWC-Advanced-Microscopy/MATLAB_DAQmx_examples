@@ -60,13 +60,13 @@ function AOandAI
     minVoltage = -10;
     maxVoltage =  10;
 
-    sampleRate = 30e3; % Samples per second
+    sampleRate = 5e3; % Samples per second
 
     %Play a sinewave out of the AO 
     waveform = sin(linspace(-pi,pi, sampleRate/55))' * 5; % Build a sine wave to play through the AO line. NOTE: column vector
-    updatePeriod = 0.15; % How often to read 
+    updatePeriod = 0.5; % How often to read 
     readEveryNpoints=round(updatePeriod * sampleRate); % every this many points read data
-    
+
     % Open a figure window and have it shut off the acquisition when closed
     % See: basicConcepts/windowCloseFunction.m
     fprintf('Close figure to quit acquisition\n')
@@ -74,7 +74,7 @@ function AOandAI
     set(fig, 'CloseRequestFcn', @windowCloseFcn, ...
            'Name', 'Close figure to stop acquisition')
 
-    try 
+    try
         % * Create separate DAQmx tasks for the AI and AO
         %   More details at: "help dabs.ni.daqmx.Task"
         %   C equivalent - DAQmxCreateTask 
@@ -180,7 +180,7 @@ function AOandAI
         end
 
         if exist('fig','var') %In case this is called in the catch block
-            delete(fig)            
+            delete(fig)
         end
     end %close windowCloseFcn
 
