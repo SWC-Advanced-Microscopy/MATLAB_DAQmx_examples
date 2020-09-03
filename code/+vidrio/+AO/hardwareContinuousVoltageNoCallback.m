@@ -22,15 +22,14 @@ function hardwareContinuousVoltageNoCallback
     %    2. Create a task.
     %    3. Create an Analog Output voltage channel.
     %    4. Define the update rate for the voltage generation. Additionally, define 
-    %       the sample mode to be continuous, do not allow sample regeneration, and 
+    %       the sample mode to be continuous, allow sample regeneration, and 
     %       set the size of the output buffer to be equal to the length of waveform we
     %       will be playing out.
     %    5  Write the waveform to the buffer. 
-    %    6. Set up an anonymous function to regenerate the waveform before the buffer empties.
-    %    7. Call the Start function.
-    %    8. Continuously play the waveform until the user hits ctrl-c or an error occurs.
-    %    9. Clear the task
-    %    10. Display an error if any.
+    %    6. Call the Start function.
+    %    7. Continuously play the waveform until the user hits ctrl-c or an error occurs.
+    %    8. Clear the task
+    %    9. Display an error if any.
     %
     %
     % Rob Campbell - Basel, 2017
