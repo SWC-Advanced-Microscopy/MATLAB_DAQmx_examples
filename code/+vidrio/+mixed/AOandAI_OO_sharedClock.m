@@ -94,11 +94,11 @@ classdef AOandAI_OO_sharedClock < handle
             plot(obj.axis_B, zeros(round(obj.sampleRateAO*obj.updatePeriod),1),'.-')
 
             %Make plots look nice
-            obj.axis_A.XLabel.String='Voltage (V)';
-            obj.axis_A.YLabel.String='Samples';
+            obj.axis_A.YLabel.String='Voltage (V)';
+            obj.axis_A.XLabel.String='Samples';
 
             obj.axis_B.XLabel.String='Voltage (V)';
-            obj.axis_B.YLabel.String='Samples';
+            obj.axis_B.YLabel.String='Voltage (V)';
 
             % Set properties of both axes together
             set([obj.axis_A,obj.axis_B], 'Box', 'On', 'XGrid', 'On', 'YGrid', 'On', 'YLim', [obj.minVoltage,obj.maxVoltage])
