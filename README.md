@@ -7,10 +7,15 @@ Also supplied are some contrasting examples using The Mathworks [Data Acquisitio
 All examples require a Windows machine. 
 
 
-### The `dabs.ni.daqmx` wrapper
+### The `dabs.ni.daqmx` wrapper and .NET
 The MATLAB [Data Acquisition Toolbox](https://www.mathworks.com/products/daq.html) is the most common way of handling data acquisition in MATLAB. 
 However, with NI hardware you can also use the free `dabs.ni.daqmx` wrapper that is part of [ScanImage](http://www.vidriotechnologies.com/).
 This is a thin, object-oriented wrapper that provides access to almost the full DAQmx API.
+This may be particularly helpful to those who are used to the ScanImage API and it works pretty well.
+Alternatively, you can call the DAQmx library more directly using the .NET interface.
+Example code for this is in the `nidaqmx` module (i.e. the `+nidaqmx` directory).
+The Vidrio wrapper is a little more similar to the call structure you will find in Python, but it requires a ScanImage install (free).
+The .NET interface requires you to have installed .NET support when you installed DAQmx.
 
 In addition to `dabs.ni.daqmx`, ScanImage also supplies an [FPGA](http://www.ni.com/fpga/) interface wrapper (`dabs.ni.rio`) which can be used to run a [bitfile](http://www.ni.com/white-paper/9640/en/) compiled using LabVIEW FPGA on any [NI RIO](http://www.ni.com/academic/students/learn-rio/what-is/) FPGA target. 
 The [NI VISA](https://www.ni.com/visa/) wrapper (`dabs.ni.visa`) connects to and communicates with devices that support NI's VISA interface (such as oscilloscopes). 
@@ -89,7 +94,6 @@ If they do not:
 ### Further information 
 * [Using NI-DAQmx in Text Based Programming Environments](http://www.ni.com/tutorial/5409/en/)
 * [DAQmx C Reference help](http://zone.ni.com/reference/en-XX/help/370471AE-01/) and [C functions listing](http://zone.ni.com/reference/en-XX/help/370471AE-01/TOC3.htm)
-* Vidrio DAQmx [docs](http://scanimage.vidriotechnologies.com/display/API/Hardware+Support+Package+%28dabs%29+-+ni+-+daqmx) and [demos](http://scanimage.vidriotechnologies.com/display/API/Hardware+Support+Package+%28dabs%29+-+ni+-+daqmx+-+demos)
 * See [SimpleMScanner](https://github.com/tenss/SimpleMScanner) for basic 2-photon scanning software written using the techniques shown here. 
 
 ### DAQmx in other languages
@@ -103,3 +107,6 @@ If they do not:
 ### Projects using the Vidrio DAQmx wrapper
 * [ScanImage Tools](https://github.com/BaselLaserMouse/ScanImageTools)
 * [SimpleMScanner](https://github.com/tenss/SimpleMScanner)
+
+### Projects using NI's DAQmx .NET assembly
+* [LSMAQ](https://github.com/danionella/lsmaq/)
