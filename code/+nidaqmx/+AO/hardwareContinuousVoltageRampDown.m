@@ -98,18 +98,20 @@ function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
     % The starts right away since we configured no triggers
     task.Start;
 
-    %input('Press return to stop')
+    input('Press return to change signal amplitude (there will be a delay)')
 
-    %taskWriter.WriteMultiSample(false, waveform*0.15);
-    %taskWriter.WriteMultiSample(false, waveform*0.05);
+    taskWriter.WriteMultiSample(false, waveform*0.15);
 
-    %pause(5)
+    pause(10)
+
     % Block until the task is complete
-    %task.Stop;
+    input('Press return to stop')
+
+    task.Stop;
 
 
     % Reset the device we will use
-    %DaqSystem.Local.LoadDevice(devName).Reset
+    DaqSystem.Local.LoadDevice(devName).Reset
 
 
 end %hardwareFiniteVoltage
