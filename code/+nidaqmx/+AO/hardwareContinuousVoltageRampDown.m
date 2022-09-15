@@ -1,13 +1,15 @@
 function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
-    % Example showing basic hardware-timed analog output with continuous samples DAQmx .NET
+    % Example showing how to ramp down a regenerative signal
     %
     % function nidaqmx.AO.hardwareContinuousVoltageBasic
     %
     % Purpose
     % Shows how to do hardware-timed analog output using the DAQmx .NET interface.
     % This function plays a sine wave out of an analog output channel. The example uses the card's
-    % on-board clock but uses no triggers. This is very similar to nidaqmx.AO.hardwareFiniteVoltage
-    % but with a couple of small changes to make the output continuous.
+    % on-board clock but uses no triggers. After the siganl begins playing,
+    % the user is prompted to press return. The signal ramps down over
+    % about a second to a new, lower, amplitude. The signal continues to
+    % play until the user presses return a second time. 
     %
     %
     % Monitoring the output
@@ -33,10 +35,10 @@ function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
 
 
     % Task configuration
-    sampleRate = 1000;                  % Sample Rate in Hz
+    sampleRate = 1E6;                  % Sample Rate in Hz
 
     % Build one cycle of a sine wave to play through the AO line (note the transpose)
-    waveform = sin(linspace(-pi,pi, sampleRate))';
+    waveform = sin(linspace(-pi,pi, sampleRate/10))';
     numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
 
 
@@ -98,18 +100,22 @@ function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
     % The starts right away since we configured no triggers
     task.Start;
 
-    %input('Press return to stop')
+    input('Press return to ramp down amplitude')
 
-    %taskWriter.WriteMultiSample(false, waveform*0.15);
-    %taskWriter.WriteMultiSample(false, waveform*0.05);
+    for amp = 0.75:-0.1:0
+        taskWriter.WriteMultiSample(false, waveform*amp);
+    end
 
-    %pause(5)
+
+
+    input('Press return to stop')
+
     % Block until the task is complete
-    %task.Stop;
+    task.Stop;
 
 
     % Reset the device we will use
-    %DaqSystem.Local.LoadDevice(devName).Reset
+    DaqSystem.Local.LoadDevice(devName).Reset
 
 
 end %hardwareFiniteVoltage
