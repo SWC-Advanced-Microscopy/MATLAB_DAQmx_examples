@@ -54,8 +54,8 @@ function hardwareFiniteVoltage
     sampleRate = 1000;                  % Sample Rate in Hz
 
     % Build one cycle of a sine wave to play through the AO line (note the transpose)
-    waveForm = sin(linspace(-pi,pi, sampleRate))';
-    numSamplesPerChannel = length(waveForm) ;   % The number of samples to be stored in the buffer per channel
+    waveform = sin(linspace(-pi,pi, sampleRate))';
+    numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
 
 
     try
@@ -91,7 +91,7 @@ function hardwareFiniteVoltage
         %   More details at: "help dabs.ni.daqmx.Task.writeAnalogData"
         %   Writes doubles using DAQmxWriteAnalogF64
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxwriteanalogf64/
-        hTask.writeAnalogData(waveForm, 5)
+        hTask.writeAnalogData(waveform, 5)
 
 
         % Start the task and wait until it is complete. Task starts right away since we
