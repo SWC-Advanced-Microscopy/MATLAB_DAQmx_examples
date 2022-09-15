@@ -25,6 +25,7 @@ function hardwareContinuousVoltageWithCallBack
     % Also see:
     % TMW DAQ Toolbox example: daqtoolbox.AI.analogInput_Continuous
     % ANSI C: DAQmx_ANSI_C_examples/AI/ContAcq-IntClk.c 
+    % vidrio.AI.hardwareContinuousVoltage (without a callback function)
 
 
     % Parameters for the acquisition (device and channels)
@@ -36,10 +37,9 @@ function hardwareContinuousVoltageWithCallBack
 
 
     % Task configuration
-    sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
-                                        % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-    sampleRate = 5000;                  % Sample Rate in Hz
-    numSamplesPerChannel = sampleRate*2 ; % The number of samples to be stored in the buffer per channel
+    sampleRate = 10E3;                  % Sample Rate in Hz
+    numSamplesToPlot = 1000 ;            % Read off this many samples each time to plot
+    bufferSize_numSamplesPerChannel = 40*numSamplesToPlot; % The number of samples to be stored in the buffer per channel. 
 
 
     try
@@ -50,29 +50,30 @@ function hardwareContinuousVoltageWithCallBack
         hTask = dabs.ni.daqmx.Task(taskName); 
 
 
-        % * Set up analog output 0 on device defined by variable devName
-        %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan"
-        %   C equivalent - DAQmxCreateAOVoltageChan
-        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
+        % * Set up analog inputs on device defined by variable devName
+        %   More details at: "help dabs.ni.daqmx.Task.createAIVoltageChan"
+        %   C equivalent - DAQmxCreateAIVoltageChan
+        %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaivoltagechan/
         hTask.createAIVoltageChan(devName, physicalChannels, [], minVoltage, maxVoltage);
 
 
-        % * Configure the sampling rate and the number of samples
+        % * Configure the sampling rate and the size of the buffer in samples using the on-board sanple clock
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-        hTask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps', numSamplesPerChannel, sampleClockSource);
+        hTask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps', bufferSize_numSamplesPerChannel, 'OnboardClock');
 
 
         % * Set up a callback function to regularly read the buffer and plot the data.
         %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
-        hTask.registerEveryNSamplesEvent(@readAndPlotData, 500, 1, 'Scaled');
+        hTask.registerEveryNSamplesEvent(@readAndPlotData, numSamplesToPlot, 1, 'Scaled');
 
 
         % Open a figure window and have it shut off the acquisition when closed
         % See: basicConcepts/windowCloseFunction.m
         fig=clf;
-        fig.CloseRequestFcn=@windowCloseFcn;
+        set(fig,'CloseRequestFcn', @windowCloseFcn, ...
+            'Name', 'Close figure window to stop acquisition')
 
 
         % Start the task and wait until it is complete. Task starts right away since we
@@ -80,7 +81,7 @@ function hardwareContinuousVoltageWithCallBack
         hTask.start
 
 
-       fprintf('Recoding data on %s. Close window to stop.\n', devName);
+       fprintf('Recording data on %s. Close window to stop.\n', devName);
     
 
 
@@ -112,12 +113,14 @@ function hardwareContinuousVoltageWithCallBack
 
 
     function readAndPlotData(src,evt)
+        % This callback function runs each time a pre-defined number of points have been collected
+        % This is defined at the hTask.registerEveryNSamplesEvent method call.
         hTask = src;
         data = evt.data;
 
         errorMessage = evt.errorMessage;
-        
-        % check for errors
+
+        % check for errors and close the task if any occur. 
         if ~isempty(errorMessage)
             delete(hTask);
             error(errorMessage);

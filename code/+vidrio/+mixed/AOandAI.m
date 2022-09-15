@@ -14,9 +14,13 @@ function AOandAI
     %    vidrio.AO.hardwareContinuousVoltage
     %
     %    Note that in this example the AI and AO do not share a clock. They are set to run at 
-    %    at the same rate, but they won't be running on the same clock. This can create jitter 
-    %    and, for some desired sample rates, continuously variable phase delays. See: 
+    %    at the same sample rate, but they won't be running on the same clock. This can create 
+    %    jitter and, for some desired sample rates, continuously variable phase delays. See: 
     %    vidrio.mixed.AOandAI_OO_sharedClock
+    %
+    %
+    % Wiring instructions:
+    % connect AI0 to AO0 on the DAQ device you are working on. 
     %
     %
     % Demonstrated steps:
@@ -47,25 +51,30 @@ function AOandAI
     % Basic AO digital triggering: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
     % AO and AI with a class rather than a functio: vidrio.mixed.AOandAI_OO
 
-    AIDevice = 'Dev1';
+    DAQdevice = 'Dev1';
+
     AIChans = 0; 
-    AIterminalConfig = 'DAQmx_Val_RSE'; %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
-    AODevice = 'Dev1';
+    AIterminalConfig = 'DAQmx_Val_Cfg_Default'; %Valid values: 'DAQmx_Val_Cfg_Default', 'DAQmx_Val_RSE', 'DAQmx_Val_NRSE', 'DAQmx_Val_Diff', 'DAQmx_Val_PseudoDiff'
     AOChan = 0; 
 
     minVoltage = -10;
     maxVoltage =  10;
 
-    sampleRate = 10e3; %Hz
-    updatePeriod = 0.15; % How often to read 
-
+    sampleRate = 5e3; % Samples per second
 
     %Play a sinewave out of the AO 
     waveform = sin(linspace(-pi,pi, sampleRate/55))' * 5; % Build a sine wave to play through the AO line. NOTE: column vector
-    numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
+    updatePeriod = 0.5; % How often to read 
+    readEveryNpoints=round(updatePeriod * sampleRate); % every this many points read data
 
+    % Open a figure window and have it shut off the acquisition when closed
+    % See: basicConcepts/windowCloseFunction.m
+    fprintf('Close figure to quit acquisition\n')
+    fig = clf;
+    set(fig, 'CloseRequestFcn', @windowCloseFcn, ...
+           'Name', 'Close figure to stop acquisition')
 
-    try 
+    try
         % * Create separate DAQmx tasks for the AI and AO
         %   More details at: "help dabs.ni.daqmx.Task"
         %   C equivalent - DAQmxCreateTask 
@@ -78,8 +87,8 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.createAOVoltageChan" and "help dabs.ni.daqmx.Task.createAIVoltageChan"
         %   C equivalent - DAQmxCreateAOVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
-        hAITask.createAIVoltageChan(AIDevice, AIChans, [], minVoltage, maxVoltage, [], [], AIterminalConfig);
-        hAOTask.createAOVoltageChan(AODevice, AOChan);
+        hAITask.createAIVoltageChan(DAQdevice, AIChans, [], minVoltage, maxVoltage, [], [], AIterminalConfig);
+        hAOTask.createAOVoltageChan(DAQdevice, AOChan);
 
 
         %--------------------------------------------------------------------------------
@@ -89,13 +98,12 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-        hAITask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps',  round(sampleRate*updatePeriod)*10);
+        hAITask.cfgSampClkTiming(sampleRate, 'DAQmx_Val_ContSamps',  readEveryNpoints*10);
 
         % * Use a callback function to read from the buffer at the interval set by updatePeriod
         %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
         %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
-        hAITask.registerEveryNSamplesEvent(@readAndPlotData,  round(updatePeriod * sampleRate), false, 'Scaled');
-
+        hAITask.registerEveryNSamplesEvent(@readAndPlotData, readEveryNpoints, false, 'Scaled');
 
 
         %-------------------------------------------------------------------------------
@@ -126,16 +134,8 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task.cfgDigEdgeStartTrig"
         %   DAQmxCfgDigEdgeStartTrig
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgdigedgestarttrig/
-        hAOTask.cfgDigEdgeStartTrig(['/',AIDevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising');
-
-
-        % Open a figure window and have it shut off the acquisition when closed
-        % See: basicConcepts/windowCloseFunction.m
-        fprintf('Close figure to quit acquisition\n')
-        fig = clf;
-        set(fig, 'Name', 'Close figure to stop acquisition')
-        fig.CloseRequestFcn = @windowCloseFcn;
-
+        hAOTask.cfgDigEdgeStartTrig(['/',DAQdevice,'/ai/StartTrigger'], 'DAQmx_Val_Rising')
+        
         hAOTask.start();
         hAITask.start();
 
@@ -146,6 +146,7 @@ function AOandAI
             hAITask.stop;    % Calls DAQmxStopTask
             hAOTask.stop;
             delete([hAITask, hAOTask]);  % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
+            delete(fig)
         else
             fprintf('No task variable present for clean up\n')
         end
@@ -155,7 +156,7 @@ function AOandAI
     end %try/catch
 
 
-    function readAndPlotData(src,evnt)
+    function readAndPlotData(src,~)
         % Scaled sets the input to be represented as a voltage value
         inData = readAnalogData(src, src.everyNSamples, 'Scaled'); 
         plot(inData)
@@ -179,7 +180,7 @@ function AOandAI
         end
 
         if exist('fig','var') %In case this is called in the catch block
-            delete(fig)            
+            delete(fig)
         end
     end %close windowCloseFcn
 

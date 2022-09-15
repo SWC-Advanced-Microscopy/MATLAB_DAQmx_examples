@@ -13,12 +13,11 @@ classdef streamingPlotter < handle
     % This example creates a class that that makes a scrolling line plot on the current 
     % axes. It creates a figure if none exists. The scrolling figure can be modified by 
     % changing its update rate, number of points, and a small number of plot properties. 
-    % See below for examples.
     %
     % 
     % USAGE EXAMPLES
     %
-    % One - create an instance of the class an interact with it:
+    % One - create an instance of the class and interact with it:
     % >> S=streamingPlotter;     
     % >> S.setUpdateInterval(0.03) % Increase the update rate
     % >> S.markerColor='r'; % Set the marker colour to red by changing the value of a class property
@@ -127,9 +126,9 @@ classdef streamingPlotter < handle
         function setUpdateInterval(obj,updateInterval)
             % Changes the update interval of the plot
             %
-            % streamingPlotter.setUpdateInterval(intervalInSeconds)
+            % streamingPlotter.setUpdateInterval(updateInterval)
             %
-            % intervalInSeconds - time between plot update events in seconds. 
+            % updateInterval - time between plot update events in seconds. 
 
             % You could also do this with a dependent property (that would be the advanced approach):
             % https://www.mathworks.com/help/matlab/matlab_oop/access-methods-for-dependent-properties.html
@@ -167,4 +166,4 @@ classdef streamingPlotter < handle
     end %close hidden methods block
 
 
-end %close simpleOOexample classdef
+end %close streamingPlotter classdef

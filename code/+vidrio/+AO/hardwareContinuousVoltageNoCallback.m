@@ -1,28 +1,30 @@
-function hardwareContinuousVoltageNoRegen
-    % Example showing hardware-timed continuous analog output without regeneration using the Vidrio dabs.ni.daqmx wrapper
+function hardwareContinuousVoltageNoCallback
+    % Example showing hardware-timed continuous analog output using the Vidrio dabs.ni.daqmx wrapper
     %
-    % function vidrio.AO.hardwareContinuousVoltageNoRegen
+    % function vidrio.AO.hardwareContinuousVoltageNoCallback
     %
     % Purpose
     % Demonstrates how to do hardware-timed continuous analog output using Vidrio's dabs.ni.daqmx wrapper. 
     % This function ouputs a continuous sine wave out of an analog output channel using the DAQ's 
-    % internal (on-board) sample clock. The example uses no triggers. The waveform data is written to the
-    % buffer at intervals using a callback funtion. In other words, there is no "regeneration". 
-    % If regeneration were enabled, data written to either the user buffer or the FIFO would be reused by 
-    % the DAQ device to produce the waveform.
+    % internal (on-board) sample clock. The example uses no triggers. The waveform is regenerated without
+    % using a callback function. When regeneration is enabled, data written to either the user buffer or 
+    % the FIFO is reused by the DAQ device to produce the waveform. 
+    %
     %
     % Monitoring the output
     % If you lack an oscilloscope you may physically connect the analog output to 
     % an analog input and monitor this using the NI MAX test panel. You likely will need
     % to select RSE: http://www.ni.com/white-paper/3344/en/
+    % 
     %
     % Demonstrated steps:
     %    1. Create a vector comprising a single cycle of a sinewave which will play at 1 Hz.
     %    2. Create a task.
     %    3. Create an Analog Output voltage channel.
     %    4. Define the update rate for the voltage generation. Additionally, define 
-    %       the sample mode to be continuous and set the size of the output buffer to be equal 
-    %       to the length of waveform we will be playing out.
+    %       the sample mode to be continuous, allow sample regeneration, and 
+    %       set the size of the output buffer to be equal to the length of waveform we
+    %       will be playing out.
     %    5  Write the waveform to the buffer. 
     %    6. Call the Start function.
     %    7. Continuously play the waveform until the user hits ctrl-c or an error occurs.
@@ -34,11 +36,11 @@ function hardwareContinuousVoltageNoRegen
     %
     % 
     % Also see:
-    % TMW DAQ Toolbox example: *Is non-regenerative AO possible with TMW toolbox*?
-    % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Continuous_Output
-    % Same but with two channels: vidrio.AO.hardwareContinuousVoltageNoRegen_2chans
-    % Same but with a digital trigger: vidrio.AO.hardwareContinuousVoltageNoRegen_DigTrig
+    % TMW DAQ Toolbox example: daqtoolbox.AO.analogOutput_Continuous
+    % Vidrio example: dabs.ni.daqmx.demos.AnalogOutput.Voltage_Continuous_Output_NoRegeneration
+    % ANSI C: DAQmx_ANSI_C_examples/AO/MultVoltUpdates-SWTimed.c
     % Restrictions on AO tasks: http://digital.ni.com/public.nsf/allkb/2C45C3DC484FF730862570E7007CCBD4?OpenDocument
+
 
     %Define a cleanup function
     tidyUp = onCleanup(@cleanUpFunction);
@@ -54,12 +56,10 @@ function hardwareContinuousVoltageNoRegen
     % Task configuration
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
                                         % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-    sampleRate = 500;                  % Sample Rate in Hz
-    waveform=sin(linspace(-pi,pi, sampleRate*2))'*5; % Build one cycle of a sine wave to play through the AO line. NOTE: column vector
+    sampleRate = 5000;                  % Sample Rate in Hz
+    waveform=sin(linspace(-pi,pi, sampleRate))'*5; % Build one cycle of a sine wave to play through the AO line. NOTE: column vector
     numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
-    bufferSize = numSamplesPerChannel * 2;
-    fprintf('Waveform length: %d\nSample rate: %d\nBuffer size: %d\n', ....
-        numSamplesPerChannel, sampleRate, bufferSize)
+
 
     try
         % * Create a DAQmx task
@@ -76,15 +76,6 @@ function hardwareContinuousVoltageNoRegen
         hTask.createAOVoltageChan(devName, physicalChannel, [], minVoltage, maxVoltage);
 
 
-        % * Disable sample regeneration
-        %  When regeneration is enabled, data written to either the user buffer or the FIFO is reused by the 
-        % DAQ device to produce the waveform. 
-        % https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019P1kSAE&l=en-GB 
-        % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
-        % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
-        hTask.set('writeRegenMode','DAQmx_Val_DoNotAllowRegen');
-
-
         % * Configure the sampling rate and the number of samples
         %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
         %   C equivalent - DAQmxCfgSampClkTiming
@@ -95,32 +86,30 @@ function hardwareContinuousVoltageNoRegen
         % See: http://zone.ni.com/reference/en-XX/help/370466AD-01/mxcncpts/buffersize/
         hTask.cfgSampClkTiming(sampleRate,'DAQmx_Val_ContSamps',numSamplesPerChannel,sampleClockSource);
 
+
+        % * Do not allow sample regeneration
+        % https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019P1kSAE&l=en-GB 
+        % http://zone.ni.com/reference/en-XX/help/370471AE-01/mxcprop/attr1453/
+        % For more on DAQmx write properties: http://zone.ni.com/reference/en-XX/help/370469AG-01/daqmxprop/daqmxwrite/
+        hTask.set('writeRegenMode','DAQmx_Val_AllowRegen');
+
+
         % * Set the size of the output buffer
         %   More details at: "help dabs.ni.daqmx.Task.cfgOutputBuffer"
         %   C equivalent - DAQmxCfgOutputBuffer
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxcfgoutputbuffer/
-        hTask.cfgOutputBuffer(bufferSize);
+        hTask.cfgOutputBuffer(numSamplesPerChannel);
 
 
-        % * Call an anonymous function function to top up the buffer when half of the samples
-        %   have been played out. Also see: basicConcepts/anonymousFunctionExample.
-        %   More details at: "help dabs.ni.daqmx.Task.registerEveryNSamplesEvent"
-        %   This is conceptually similar to the notifier "NotifyWhenScansQueuedBelow" and
-        %   the associated listener in daqtoolbox.AO.analogOutput_Continuous
-        %hTask.registerEveryNSamplesEvent(@(src,~) src.writeAnalogData(waveform,5), floor(numSamplesPerChannel*0.5));
-        hTask.registerEveryNSamplesEvent(@topUpBuffer, 125);
-
-
-
-        % * Write the waveform to the buffer with a 1 second timeout in case it fails
+        % * Write the waveform to the buffer with a 5 second timeout in case it fails
         %   More details at: "help dabs.ni.daqmx.Task.writeAnalogData"
         %   Writes doubles using DAQmxWriteAnalogF64
         %   http://zone.ni.com/reference/en-XX/help/370471AG-01/daqmxcfunc/daqmxwriteanalogf64/
-        hTask.writeAnalogData(waveform, 1)
+        hTask.writeAnalogData(waveform, 5)
 
 
-        % Start the task and wait until it is complete. Task starts right away
-        % since we configured no triggers
+        % Start the task and wait until it is complete. Task starts right away since we
+        % configured no triggers
         hTask.start
 
 
@@ -149,10 +138,5 @@ function hardwareContinuousVoltageNoRegen
             fprintf('No task variable present for clean up\n')
         end
     end %close cleanUpFunction
-
-    function topUpBuffer(src,~)
-        disp('**TOPPING UP THE BUFFER**')
-        src.writeAnalogData(waveform, 5)
-    end
 
 end %close hardwareContinuousVoltage

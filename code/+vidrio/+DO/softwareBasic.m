@@ -12,7 +12,7 @@ function softwareBasic
     % Demonstrated steps:
     %    1. Create three tasks.
     %    2. Create DO channels in three different ways to show all the available options.
-    %    3. Write digital values on at a time to these lines. 
+    %    3. Write digital values one at a time to these lines. 
     %    4. Clear the task
     %    5. Display an error if any.
     %
@@ -29,7 +29,7 @@ function softwareBasic
 
     try
 
-        % * Create two DAQmx tasks: One task has one line and the other has multiple lines
+        % * Create three DAQmx tasks: One task will have one line and the others will have multiple lines
         %   More details at: "help dabs.ni.daqmx.Task"
         %   C equivalent - DAQmxCreateTask 
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
@@ -79,7 +79,7 @@ function softwareBasic
         % Unlike the previous task we here use a row vector. This is because
         % we are writing all samples to a single logical channel. In hDO(2)
         % it was two logical channels. 
-        % NOTE: it's also possible to supply this input as binary notation, but this appears to require a running taskk
+        % NOTE: it's also possible to supply this input as binary notation, but this appears to require a running task
         hDO(3).writeDigitalData([0;1;0]);
         pause(1)
         hDO(3).writeDigitalData([0;0;0] );

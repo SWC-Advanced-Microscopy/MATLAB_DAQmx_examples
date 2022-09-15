@@ -47,7 +47,7 @@ function hardwareFiniteVoltage
     % Task configuration
     sampleClockSource = 'OnboardClock'; % The source terminal used for the sample Clock. 
                                         % For valid values see: zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgsampclktiming/
-    sampleRate = 1000;                  % Sample Rate in Hz
+    sampleRate = 20E3;                  % Sample Rate in Hz
     secsToAcquire = 1;                  % Number of seconds over which to acquire data
     numberOfSamples = secsToAcquire * sampleRate; % The finite number of samples to acquire
 
@@ -61,7 +61,7 @@ function hardwareFiniteVoltage
 
         % * Set up analog input 0 on device defined by variable devName
         %   More details at: "help dabs.ni.daqmx.Task.createAIVoltageChan"
-        %   It's is also valid to use device and channel only: e.g. "hTask.createAIVoltageChan(‘Dev1’,0);"
+        %   It's is also valid to use device and channel only: e.g. "hTask.createAIVoltageChan('Dev1',0);"
         %   C equivalent - DAQmxCreateAIVoltageChan
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaivoltagechan/
         hTask.createAIVoltageChan(devName,physicalChannels,[],minVoltage,maxVoltage);
