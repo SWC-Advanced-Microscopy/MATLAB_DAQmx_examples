@@ -1,12 +1,13 @@
-function hardwareFiniteVoltage
-    % Example showing hardware-timed analog output of a finite number of samples using DAQmx .NET
+function hardwareContinuousVoltageBasic
+    % Example showing basic hardware-timed analog output with continuous samples DAQmx .NET
     %
-    % function nidaqmx.AO.hardwareFiniteVoltage
+    % function nidaqmx.AO.hardwareContinuousVoltageBasic
     %
     % Purpose
     % Shows how to do hardware-timed analog output using the DAQmx .NET interface.
-    % This function plays one cycle of a sine wave out of an analog output channel. The 
-    % example uses the card's on-board clock but uses no triggers. 
+    % This function plays a sine wave out of an analog output channel. The example uses the card's
+    % on-board clock but uses no triggers. This is very similar to nidaqmx.AO.hardwareFiniteVoltage
+    % but with a couple of small changes to make the output continuous.
     %
     %
     % Monitoring the output
@@ -57,6 +58,10 @@ function hardwareFiniteVoltage
     task.AOChannels.CreateVoltageChannel(channelName, taskName,-10, 10, AOVoltageUnits.Volts);
 
 
+    %%% The folowing line is an addition over the finite example
+    task.Stream.WriteRegenerationMode = WriteRegenerationMode.AllowRegeneration;
+
+
     % * Configure the sampling rate and the number of samples
     %   More details at: "help dabs.ni.daqmx.Task.cfgSampClkTiming"
     %   C equivalent - DAQmxCfgSampClkTiming
@@ -65,9 +70,8 @@ function hardwareFiniteVoltage
     task.Timing.ConfigureSampleClock('', ...
             sampleRate, ...
             SampleClockActiveEdge.Rising, ...
-            SampleQuantityMode.FiniteSamples, ...
+            SampleQuantityMode.ContinuousSamples, ... % And we set this to continuous
             numSamplesPerChannel)
-
 
 
     %  * Create an instance of AnalogSingleChannelWriter
@@ -86,7 +90,6 @@ function hardwareFiniteVoltage
     %
     taskWriter.WriteMultiSample(false, waveform);
 
-
     fprintf('Playing sine wave through AO0 %s...\n', devName)
 
     % * Start the task
@@ -95,15 +98,15 @@ function hardwareFiniteVoltage
     % The starts right away since we configured no triggers
     task.Start;
 
+    input('Press return to stop')
+
 
     % Block until the task is complete
-    task.WaitUntilDone
+    task.Stop;
 
 
     % Reset the device we will use
     DaqSystem.Local.LoadDevice(devName).Reset
-
-    fprintf('Finished\n')
 
 
 end %hardwareFiniteVoltage
