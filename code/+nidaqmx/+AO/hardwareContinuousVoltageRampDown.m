@@ -1,5 +1,5 @@
 function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
-    % Example showing basic hardware-timed analog output with continuous samples DAQmx .NET
+    % Example showing basic hardware-timed anal]]og output with continuous samples DAQmx .NET
     %
     % function nidaqmx.AO.hardwareContinuousVoltageBasic
     %
@@ -33,10 +33,10 @@ function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
 
 
     % Task configuration
-    sampleRate = 1000;                  % Sample Rate in Hz
+    sampleRate = 900000;                  % Sample Rate in Hz
 
     % Build one cycle of a sine wave to play through the AO line (note the transpose)
-    waveform = sin(linspace(-pi,pi, sampleRate))';
+    waveform = sin(linspace(-pi,pi, sampleRate*0.05))';
     numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
 
 
@@ -73,6 +73,7 @@ function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
             SampleQuantityMode.ContinuousSamples, ... % And we set this to continuous
             numSamplesPerChannel)
 
+    %task.AOChannels.All.UsbTransferRequestSize=2^10;
 
     %  * Create an instance of AnalogSingleChannelWriter
     %
@@ -100,9 +101,9 @@ function [task,waveform,taskWriter] = hardwareContinuousVoltageRampDown
 
     input('Press return to change signal amplitude (there will be a delay)')
 
-    taskWriter.WriteMultiSample(false, waveform*0.15);
-
-    pause(10)
+    for ii = 0.75:-0.15:0.05
+        taskWriter.WriteMultiSample(false, waveform*ii);
+    end
 
     % Block until the task is complete
     input('Press return to stop')
