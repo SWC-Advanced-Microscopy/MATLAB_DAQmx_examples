@@ -1,7 +1,7 @@
-function hardwareContinuousVoltageBasic
+function hardwareContinuousVoltageBasic(devID)
     % Example showing basic hardware-timed analog output with continuous samples DAQmx .NET
     %
-    % function nidaqmx.AO.hardwareContinuousVoltageBasic
+    % function nidaqmx.AO.hardwareContinuousVoltageBasic(devID)
     %
     % Purpose
     % Shows how to do hardware-timed analog output using the DAQmx .NET interface.
@@ -15,6 +15,8 @@ function hardwareContinuousVoltageBasic
     % an analog input and monitor this using the NI MAX test panel. You likely will need
     % to select RSE: http://www.ni.com/white-paper/3344/en/
     %
+    % Inputs
+    %   devID - [optional] 'Dev1' by default
     %
     % Rob Campbell - SWC, 2022
 
@@ -24,11 +26,21 @@ function hardwareContinuousVoltageBasic
     import NationalInstruments.DAQmx.*
 
 
+    if nargin<1
+        devID = 'Dev1';
+    end
+
+    if ~nidaqmx.deviceExists(devID)
+        fprintf('%s does not exist\n', devId)
+        return
+    end
+
+
+
     %Define a cleanup function
     %tidyUp = onCleanup(@cleanUpFunction);
 
     %% Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
     taskName = 'hardAO';    % A string that will provide a label for the task
 
 
@@ -42,7 +54,7 @@ function hardwareContinuousVoltageBasic
 
 
     % Reset the device we will use
-    DaqSystem.Local.LoadDevice(devName).Reset
+    DaqSystem.Local.LoadDevice(devID).Reset
 
 
     % * Create a DAQmx task
@@ -50,11 +62,11 @@ function hardwareContinuousVoltageBasic
     %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
     task = NationalInstruments.DAQmx.Task;
 
-    % * Set up analog output 0 on device defined by variable devName
+    % * Set up analog output 0 on device defined by variable devID
     %   C equivalent - DAQmxCreateAOVoltageChan
     %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
     %   AOVoltageUnits is an enum
-    channelName = [devName,'/AO0'];
+    channelName = [devID,'/AO0'];
     task.AOChannels.CreateVoltageChannel(channelName, taskName,-10, 10, AOVoltageUnits.Volts);
 
 
@@ -90,7 +102,7 @@ function hardwareContinuousVoltageBasic
     %
     taskWriter.WriteMultiSample(false, waveform);
 
-    fprintf('Playing sine wave through AO0 %s...\n', devName)
+    fprintf('Playing sine wave through AO0 %s...\n', devID)
 
     % * Start the task
     % You can also start the task using the Control method and the TaskAction enum:
@@ -106,7 +118,7 @@ function hardwareContinuousVoltageBasic
 
 
     % Reset the device we will use
-    DaqSystem.Local.LoadDevice(devName).Reset
+    DaqSystem.Local.LoadDevice(devID).Reset
 
 
 end %hardwareFiniteVoltage

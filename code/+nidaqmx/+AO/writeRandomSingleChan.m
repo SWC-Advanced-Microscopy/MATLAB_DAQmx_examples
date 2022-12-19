@@ -1,31 +1,33 @@
 function writeRandomSingleChan(devID)
 % Write random numbers to AO0 of device devID using DAQmx .NET
 %
-% function nidaqmx.AO.writeRandomSingleChan
+% function nidaqmx.AO.writeRandomSingleChan(devID)
 %
 % Purpose
 % Example showing how to write random numbers to AO0 of device devID using DAQmx .NET
 % This code plays out 1000 random numbers then stops and resets the DAQ.
 %
 % Inputs
-% None
+% devID - [optional] 'Dev1' by default
 %
 % Outputs
 % None
 %
 % Rob Campbell - SWC 2022
 
-
-if ~nidaqmx.deviceExists(devID)
-    return
-end
-
-
 % Add the DAQmx assembly if needed then import
 nidaqmx.add_DAQmx_Assembly
 import NationalInstruments.DAQmx.*
 
 
+if nargin<1
+    devID = 'Dev1';
+end
+
+if ~nidaqmx.deviceExists(devID)
+    fprintf('%s does not exist\n', devId)
+    return
+end
 
 
 % Reset the device we will use

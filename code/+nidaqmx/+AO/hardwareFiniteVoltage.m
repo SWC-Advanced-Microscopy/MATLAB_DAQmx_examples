@@ -1,4 +1,4 @@
-function hardwareFiniteVoltage
+function hardwareFiniteVoltage(devID)
     % Example showing hardware-timed analog output of a finite number of samples using DAQmx .NET
     %
     % function nidaqmx.AO.hardwareFiniteVoltage
@@ -8,6 +8,8 @@ function hardwareFiniteVoltage
     % This function plays one cycle of a sine wave out of an analog output channel. The 
     % example uses the card's on-board clock but uses no triggers. 
     %
+    % Inputs
+    % devID - [optional] 'Dev1' by default
     %
     % Monitoring the output
     % If you lack an oscilloscope you may physically connect the analog output (AO0) to
@@ -16,6 +18,18 @@ function hardwareFiniteVoltage
     %
     %
     % Rob Campbell - SWC, 2022
+
+
+
+
+    if nargin<1
+        devID = 'Dev1';
+    end
+
+    if ~nidaqmx.deviceExists(devID)
+        fprintf('%s does not exist\n', devId)
+        return
+    end
 
 
     % Add the DAQmx assembly if needed then import
@@ -27,7 +41,6 @@ function hardwareFiniteVoltage
     %tidyUp = onCleanup(@cleanUpFunction);
 
     %% Parameters for the acquisition (device and channels)
-    devName = 'Dev1';       % the name of the DAQ device as shown in MAX
     taskName = 'hardAO';    % A string that will provide a label for the task
 
 
@@ -41,7 +54,7 @@ function hardwareFiniteVoltage
 
 
     % Reset the device we will use
-    DaqSystem.Local.LoadDevice(devName).Reset
+    DaqSystem.Local.LoadDevice(devID).Reset
 
 
     % * Create a DAQmx task
@@ -49,11 +62,11 @@ function hardwareFiniteVoltage
     %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
     task = NationalInstruments.DAQmx.Task;
 
-    % * Set up analog output 0 on device defined by variable devName
+    % * Set up analog output 0 on device defined by variable devID
     %   C equivalent - DAQmxCreateAOVoltageChan
     %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreateaovoltagechan/
     %   AOVoltageUnits is an enum
-    channelName = [devName,'/AO0'];
+    channelName = [devID,'/AO0'];
     task.AOChannels.CreateVoltageChannel(channelName, taskName,-10, 10, AOVoltageUnits.Volts);
 
 
@@ -87,7 +100,7 @@ function hardwareFiniteVoltage
     taskWriter.WriteMultiSample(false, waveform);
 
 
-    fprintf('Playing sine wave through AO0 %s...\n', devName)
+    fprintf('Playing sine wave through AO0 %s...\n', devID)
 
     % * Start the task
     % You can also start the task using the Control method and the TaskAction enum:
@@ -101,7 +114,7 @@ function hardwareFiniteVoltage
 
 
     % Reset the device we will use
-    DaqSystem.Local.LoadDevice(devName).Reset
+    DaqSystem.Local.LoadDevice(devID).Reset;
 
     fprintf('Finished\n')
 
