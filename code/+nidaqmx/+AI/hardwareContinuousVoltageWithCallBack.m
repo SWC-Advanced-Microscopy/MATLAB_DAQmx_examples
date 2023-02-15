@@ -123,7 +123,7 @@ function hardwareContinuousVoltageWithCallBack(devID)
             fprintf('Input buffer is empty\n' );
         else
             P{1}.YData(1,:) = data(1,:);
-            P{2}.YData(1,:) = data(<,:);
+            P{2}.YData(1,:) = data(2,:);
             drawnow
         end
 
