@@ -57,8 +57,8 @@ fprintf('\nPlaying %d random numbers out of %s/AO0. Ctrl-C to stop\n\n', n, devI
 
 
 for ii=1:n
-    value = rand*20 - 10;
-    taskWriter.WriteSingleSample(true,value);
+    t_value = rand*20 - 10;
+    taskWriter.WriteSingleSample(true,t_value);
 end
 
 fprintf('Finished and reseting DAQ\n')

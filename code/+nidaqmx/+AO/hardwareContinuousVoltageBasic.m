@@ -1,5 +1,5 @@
 function hardwareContinuousVoltageBasic(devID)
-    % Example showing basic hardware-timed analog output with continuous samples DAQmx .NET
+    % Example showing basic hardware-timed analog output with continuous samples using DAQmx via .NET
     %
     % function nidaqmx.AO.hardwareContinuousVoltageBasic(devID)
     %
@@ -31,14 +31,11 @@ function hardwareContinuousVoltageBasic(devID)
     end
 
     if ~nidaqmx.deviceExists(devID)
-        fprintf('%s does not exist\n', devId)
+        fprintf('%s does not exist\n', devID)
         return
     end
 
 
-
-    %Define a cleanup function
-    %tidyUp = onCleanup(@cleanUpFunction);
 
     %% Parameters for the acquisition (device and channels)
     taskName = 'hardAO';    % A string that will provide a label for the task

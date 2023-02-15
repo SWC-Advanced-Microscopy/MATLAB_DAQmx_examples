@@ -1,4 +1,4 @@
-function hardwareContinuousVoltageRampDown(devID)
+function varargout = hardwareContinuousVoltageRampDown(devID,nonInteractive)
     % Example showing how to ramp down a regenerative signal
     %
     % function nidaqmx.AO.hardwareContinuousVoltageBasic(devID)
@@ -21,6 +21,8 @@ function hardwareContinuousVoltageRampDown(devID)
     % Inputs
     % devID - optional. 'Dev1' by default.  Specifies the device to which
     %       to connect.
+    % nonInteractive - does not ask for user input before next stage. Just
+    %                  proceeds after a delay. false by default.
     %
     % Outputs [optional]
     % task
@@ -35,6 +37,10 @@ function hardwareContinuousVoltageRampDown(devID)
 
     if nargin<1
         devID = 'Dev1';
+    end
+
+    if nargin<2
+        nonInteractive = false;
     end
 
     if ~nidaqmx.deviceExists(devID)
@@ -52,10 +58,10 @@ function hardwareContinuousVoltageRampDown(devID)
 
 
     % Task configuration
-    sampleRate = 1E6;                  % Sample Rate in Hz
+    sampleRate = 1E4;                  % Sample Rate in Hz
 
     % Build one cycle of a sine wave to play through the AO line (note the transpose)
-    waveform = sin(linspace(-pi,pi, sampleRate/10))';
+    waveform = sin(linspace(-pi,pi, 500));%sampleRate/10))';
     numSamplesPerChannel = length(waveform) ;   % The number of samples to be stored in the buffer per channel
 
 
@@ -105,11 +111,17 @@ function hardwareContinuousVoltageRampDown(devID)
     % TaskAction isn an enum
     task.Control(TaskAction.Verify);
 
+    %task.AOChannels.All.UsbTransferRequestCount=1; % Another option should things not work
+    t.AOChannels.All.UseOnlyOnBoardMemory = 1;
 
     % * Write the waveform to the buffer
     %
     taskWriter.WriteMultiSample(false, waveform);
 
+    if nargout>1
+        varargout{1} = task;
+        return
+    end
     fprintf('Playing sine wave through AO0 %s...\n', devID)
 
     % * Start the task
@@ -118,8 +130,12 @@ function hardwareContinuousVoltageRampDown(devID)
     % The starts right away since we configured no triggers
     task.Start;
 
+    if nonInteractive
+        pause(0.15)
+    else
+        input('Press return to ramp down amplitude')
+    end
 
-    input('Press return to ramp down amplitude')
 
     for amp = 0.75:-0.1:0
         taskWriter.WriteMultiSample(false, waveform*amp);
@@ -128,7 +144,12 @@ function hardwareContinuousVoltageRampDown(devID)
 
 
     % Block until the task is complete
-    input('Press return to stop')
+    if nonInteractive
+        pause(0.05)
+    else
+        input('Press return to stop')
+    end
+
 
     task.Stop;
 
