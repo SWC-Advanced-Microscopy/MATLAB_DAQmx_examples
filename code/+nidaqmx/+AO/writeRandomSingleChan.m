@@ -16,7 +16,7 @@ function writeRandomSingleChan(devID)
 % Rob Campbell - SWC 2022
 
 % Add the DAQmx assembly if needed then import
-nidaqmx.add_DAQmx_Assembly
+NET.addAssembly('NationalInstruments.DAQmx');
 import NationalInstruments.DAQmx.*
 
 
@@ -53,16 +53,17 @@ taskWriter = AnalogSingleChannelWriter(task.Stream);
 
 
 n = 1000;
-fprintf('\nPlaying %d random numbers out of %s/AO0. Ctrl-C to stop\n\n', n, devID)
+fprintf('\nPlaying %d random numbers out of %s/AO0.\n\n', n, devID)
 
-
+task.Start
+autoStart = false;
 for ii=1:n
     t_value = rand*20 - 10;
-    taskWriter.WriteSingleSample(true,t_value);
+    taskWriter.WriteSingleSample(autoStart,t_value);
 end
 
+% NOTE: if user hits ctrl-c before we have played out all 1000 numbers then the
+%       following does not run
 fprintf('Finished and reseting DAQ\n')
-
-
 DaqSystem.Local.LoadDevice(devID).Reset
 

@@ -5,8 +5,8 @@ function hardwareFiniteVoltage(devID)
     %
     % Purpose
     % Shows how to do hardware-timed analog output using the DAQmx .NET interface.
-    % This function plays one cycle of a sine wave out of an analog output channel. The 
-    % example uses the card's on-board clock but uses no triggers. 
+    % This function plays one cycle of a sine wave out of an analog output channel. The
+    % example uses the card's on-board clock but uses no triggers.
     %
     % Inputs
     % devID - [optional] 'Dev1' by default
@@ -33,7 +33,7 @@ function hardwareFiniteVoltage(devID)
 
 
     % Add the DAQmx assembly if needed then import
-    nidaqmx.add_DAQmx_Assembly
+    NET.addAssembly('NationalInstruments.DAQmx');
     import NationalInstruments.DAQmx.*
 
 

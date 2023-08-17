@@ -16,7 +16,7 @@ function hardwareContinuousVoltageWithCallBack(devID)
     % Rob Campbell - SWC, 2023
 
     % Add the DAQmx assembly if needed then import
-    nidaqmx.add_DAQmx_Assembly
+    NET.addAssembly('NationalInstruments.DAQmx');
     import NationalInstruments.DAQmx.*
 
     if nargin<1
@@ -75,7 +75,7 @@ function hardwareContinuousVoltageWithCallBack(devID)
     task.Control(TaskAction.Verify);
 
     AIlistener = addlistener(task, 'EveryNSamplesRead', @readAndPlotData);
-    %AIlistener = addlistener(task, 'EveryNSamplesRead', @(~, ev) AIreader.ReadInt16(numSamplesToPlot).int16)
+
 
     % Open a figure window and have it shut off the acquisition when closed
     % See: basicConcepts/windowCloseFunction.m
@@ -91,10 +91,10 @@ function hardwareContinuousVoltageWithCallBack(devID)
     task.Start
 
    fprintf('Recording data on %s. Close window to stop.\n', devID);
-    
 
 
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function windowCloseFcn(~,~)
         %This runs when the user closes the figure window or if there is an error
         if exist('task','var')
@@ -107,7 +107,7 @@ function hardwareContinuousVoltageWithCallBack(devID)
         end
 
         if exist('fig','var') %In case this is called in the catch block
-            delete(fig)            
+            delete(fig)
         end
     end %close windowCloseFcn
 

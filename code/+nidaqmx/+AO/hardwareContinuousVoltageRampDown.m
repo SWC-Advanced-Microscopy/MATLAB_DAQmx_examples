@@ -31,7 +31,7 @@ function varargout = hardwareContinuousVoltageRampDown(devID,nonInteractive)
 
 
     % Add the DAQmx assembly if needed then import
-    nidaqmx.add_DAQmx_Assembly
+    NET.addAssembly('NationalInstruments.DAQmx');
     import NationalInstruments.DAQmx.*
 
 
