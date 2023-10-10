@@ -27,7 +27,14 @@ fig.Color
 fig.Color='r';
 
 % What's happening there? Mention observable properties and listeners.
-% Leads us to callback functions and therefore methods. 
+% Let's create a listener that changes the color of a different figure:
+fig2 = figure;
+L = addlistener(fig,'Color','PostSet', @(~,~) set(fig2,'Color', fig.Color) )
+fig.Color='g'; %Changes both figures!
+
+
+
+%% Let us try running a callback when the window is closed
 % Run auto-complete on fig.Wi
 fig.WindowButtonDownFcn %Show it's empty
 
