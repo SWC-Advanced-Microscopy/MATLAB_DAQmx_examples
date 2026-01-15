@@ -100,7 +100,7 @@ classdef streamingPlotter < handle
             obj.plotTimer.StopFcn = @(~,~) [];
             obj.plotTimer.ExecutionMode = 'fixedDelay';
 
-            obj.startStream % Start the timer
+            obj.p % Start the timer
         end %close the streamingPlotter constructor method
 
 
