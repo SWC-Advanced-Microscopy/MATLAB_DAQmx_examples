@@ -95,7 +95,7 @@ function varargout = hardwareContinuousVoltageBasic(devID)
 
 
     % * Verify that the task parameters are valid for the hardware.
-    % TaskAction isn an enum
+    % TaskAction in an enum
     task.Control(TaskAction.Verify);
 
 
