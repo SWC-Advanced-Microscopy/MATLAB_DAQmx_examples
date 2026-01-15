@@ -1,4 +1,4 @@
-function hardwareFiniteVoltage(devID)
+function varargout = hardwareFiniteVoltage(devID)
     % Example showing hardware-timed analog output of a finite number of samples using DAQmx .NET
     %
     % function nidaqmx.AO.hardwareFiniteVoltage
@@ -108,15 +108,17 @@ function hardwareFiniteVoltage(devID)
     % The starts right away since we configured no triggers
     task.Start;
 
+    if nargout>0
+        varargout{1} = task;
+    else
+        % Block until the task is complete
+        task.WaitUntilDone
 
-    % Block until the task is complete
-    task.WaitUntilDone
+        % Reset the device we will use
+        DaqSystem.Local.LoadDevice(devID).Reset;
 
-
-    % Reset the device we will use
-    DaqSystem.Local.LoadDevice(devID).Reset;
-
-    fprintf('Finished\n')
+        fprintf('Finished\n')
+    end
 
 
 end %hardwareFiniteVoltage
