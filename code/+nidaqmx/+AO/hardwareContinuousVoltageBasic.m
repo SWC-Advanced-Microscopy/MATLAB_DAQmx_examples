@@ -1,4 +1,4 @@
-function hardwareContinuousVoltageBasic(devID)
+function varargout = hardwareContinuousVoltageBasic(devID)
     % Example showing basic hardware-timed analog output with continuous samples using DAQmx via .NET
     %
     % function nidaqmx.AO.hardwareContinuousVoltageBasic(devID)
@@ -17,6 +17,10 @@ function hardwareContinuousVoltageBasic(devID)
     %
     % Inputs
     %   devID - [optional] 'Dev1' by default
+    %
+    % Outputs [optional]
+    % task - if supplied, the task does not end and instead the user gets the task
+    %       object and can manually stop with task.Stop or task.Dispose
     %
     % Rob Campbell - SWC, 2022
 
@@ -91,7 +95,7 @@ function hardwareContinuousVoltageBasic(devID)
 
 
     % * Verify that the task parameters are valid for the hardware.
-    % TaskAction isn an enum
+    % TaskAction in an enum
     task.Control(TaskAction.Verify);
 
 
@@ -107,15 +111,16 @@ function hardwareContinuousVoltageBasic(devID)
     % The starts right away since we configured no triggers
     task.Start;
 
-    input('Press return to stop')
+    if nargout>0
+        varargout{1} = task;
+    else
+        % Block until the task is complete
+        input('Press return to stop')
+        task.Stop;
 
-
-    % Block until the task is complete
-    task.Stop;
-
-
-    % Reset the device we will use
-    DaqSystem.Local.LoadDevice(devID).Reset
+        % Reset the device we will use
+        %DaqSystem.Local.LoadDevice(devID).Reset
+    end
 
 
 end %hardwareFiniteVoltage
