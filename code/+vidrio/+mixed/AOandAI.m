@@ -79,8 +79,8 @@ function AOandAI
         %   More details at: "help dabs.ni.daqmx.Task"
         %   C equivalent - DAQmxCreateTask 
         %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
-        hAITask = dabs.ni.daqmx.Task('mixedAI');
-        hAOTask = dabs.ni.daqmx.Task('mixedAO');
+        hAITask = dabs.ni.daqmx.Task;
+        hAOTask = dabs.ni.daqmx.Task;
 
 
         % * Set up analog input and output voltage channels

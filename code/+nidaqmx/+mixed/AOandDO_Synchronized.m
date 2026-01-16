@@ -45,6 +45,7 @@ function AOandDO_Synchronized
 % Digital Output Fundamentals:
 % https://www.ni.com/docs/en-US/bundle/ni-daqmx/page/digital_output.html
 %
+%
 % Rob Campbell -- SWC 2026
 
 
@@ -60,8 +61,7 @@ function AOandDO_Synchronized
     end
 
 
-    %% Parameters
-
+    %% Define the stimulation parameters
     aoSampleRate = 10000;   % Samples per second
     doSampleRate = 10000;   % Samples per second
 
@@ -71,13 +71,11 @@ function AOandDO_Synchronized
 
 
     %% Build AO waveform (10 Hz sine, +/-2.5 V)
-
     aoSamplesPerPeriod = aoSampleRate / aoFreq;
     aoWaveform = 2.5 * sin(2*pi*(0:aoSamplesPerPeriod-1)'/aoSamplesPerPeriod);
 
 
-    %% Build DO waveform (packed port data)
-
+    %% Build DO waveforms using packed port data
     doSamplesPerPeriod1 = doSampleRate / doFreq1;
     doSamplesPerPeriod2 = doSampleRate / doFreq2;
     doNumSamples = lcm(doSamplesPerPeriod1, doSamplesPerPeriod2);
@@ -95,7 +93,6 @@ function AOandDO_Synchronized
 
 
     %% Reset the device
-
     DaqSystem.Local.LoadDevice(DAQdevice).Reset;
 
 
@@ -106,8 +103,8 @@ function AOandDO_Synchronized
         % C equivalent - DAQmxCreateTask
         % http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/
         %
-        aoTask = NationalInstruments.DAQmx.Task('mixedAO');
-        doTask = NationalInstruments.DAQmx.Task('mixedDO');
+        aoTask = NationalInstruments.DAQmx.Task;
+        doTask = NationalInstruments.DAQmx.Task;
 
 
         %------------------------------------------------------------------
