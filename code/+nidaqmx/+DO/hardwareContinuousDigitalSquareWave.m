@@ -37,7 +37,6 @@ function varargout = hardwareContinuousDigitalSquareWave(devID)
     end
 
     %% Parameters
-    taskName   = 'hardDO';
     sampleRate = 1000;   % Hz (plenty of resolution for 100 Hz)
     freq1      = 10;      % 10 Hz that will be played out of P0.0
     freq2      = 100;     % 100 Hz that will be played out of P0.1
@@ -66,13 +65,14 @@ function varargout = hardwareContinuousDigitalSquareWave(devID)
 
     % * Create a DAQmx task
     %   C equivalent - DAQmxCreateTask
-    %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/    task = NationalInstruments.DAQmx.Task;
+    %   http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcreatetask/    
+    task = NationalInstruments.DAQmx.Task;
 
-    %% Create port-wide digital output channel
+    %% Create port-wide digital output channel. Empty input arg is the task name
     channelName = [devID '/port0'];
     task.DOChannels.CreateChannel( ...
         channelName, ...
-        taskName, ...
+        '', ...
         ChannelLineGrouping.OneChannelForAllLines);
 
     %% Allow regeneration
