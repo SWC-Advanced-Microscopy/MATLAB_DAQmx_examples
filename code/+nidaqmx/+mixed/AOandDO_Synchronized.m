@@ -31,7 +31,7 @@ function AOandDO_Synchronized
 %        iii) Allow regeneration.
 %        iv)  Write waveform data to the output buffer.
 %    4b. Set up the DO task:
-%        i)   Configure the sample clock.
+%        i)   Configure the sample clock and have it be the AO clock
 %        ii)  Define the sample mode as continuous.
 %        iii) Allow regeneration.
 %        iv)  Write digital pattern to the output buffer.
@@ -169,10 +169,10 @@ function AOandDO_Synchronized
         % SET UP THE DO TASK
         %
 
-        % * Configure the sampling rate and buffer size
-        %
+        % * Configure the sampling rate and buffer size of the DO task. 
+        % Note that we are using the AO sample clock for the DO. 
         doTask.Timing.ConfigureSampleClock( ...
-            '', ...
+            ['/' DAQdevice '/ao/SampleClock'], ...
             doSampleRate, ...
             SampleClockActiveEdge.Rising, ...
             SampleQuantityMode.ContinuousSamples, ...
