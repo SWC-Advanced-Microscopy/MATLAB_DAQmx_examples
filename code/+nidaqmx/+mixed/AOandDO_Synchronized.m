@@ -187,14 +187,10 @@ function AOandDO_Synchronized
         doWriter.WriteMultiSamplePort(false, doPortData);
 
 
-        % * Configure the DO task to start when the AO task starts
-        %
-        % C equivalent - DAQmxCfgDigEdgeStartTrig
-        % http://zone.ni.com/reference/en-XX/help/370471AE-01/daqmxcfunc/daqmxcfgdigedgestarttrig/
-        %
-        doTask.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger( ...
-            ['/' DAQdevice '/ao/StartTrigger'], ...
-            DigitalEdgeStartTriggerEdge.Rising);
+        % Triggers
+        % The DO task will start when it receives clock pulses and does not need
+        % an explicit start trigger configured. Indeed, attemptig to do so causes
+        % an error. 
 
 
         %------------------------------------------------------------------
