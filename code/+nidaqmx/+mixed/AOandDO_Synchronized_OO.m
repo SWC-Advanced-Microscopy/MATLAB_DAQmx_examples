@@ -5,11 +5,27 @@ classdef AOandDO_Synchronized_OO < handle
     % vidrio.mixed.AOandDO_Synchronized
     %
     % 
-    % Example
-    %  D = nidaqmx.mixed.AOandDO_Synchronized_OO;
-    %  D.stopTasks
-    %  D.startTasks
-    %  D.stopTasks
+    %% Example
+    %
+    % % Create the tasks and start them 
+    % D = nidaqmx.mixed.AOandDO_Synchronized_OO;
+    %
+    % % We can now stop and start the tasks
+    % D.stopTasks
+    % D.startTasks
+    % 
+    % % Change the AO amplitude:
+    % D.AOamplitude=1;
+    % D.buildWaveforms
+    % D.writeData
+    %
+    % % Change the frequency of the AO waveform
+    % D.aoFreq=20;
+    % D.buildWaveforms
+    % plot(D.aoWaveform) % The waveforms we will play out
+    % D.writeData
+    %
+    %
     %  clear D
     %
     %
@@ -18,8 +34,11 @@ classdef AOandDO_Synchronized_OO < handle
 
     properties
 
+        % TODO -- work with a fixed buffer size so when we change waveforms everything makes sense. 
+
         %% Define the stimulation parameters
         sampleRate = 10000  % Samples per second. Best not to change this
+        bufferSize = 1000; % Will force a buffer of this length. 
 
         % The frequency and amplitude of the AO sine wave
         aoFreq  = 10          % 10 Hz sine wave on AO0
@@ -32,7 +51,6 @@ classdef AOandDO_Synchronized_OO < handle
         % Waveforms that are to be written to the DAQ
         aoWaveform
         doPortData
-        doNumSamples % number of samples written to the DO buffer
 
         DAQdevice % string defining the name of the DAQ
 
@@ -125,17 +143,27 @@ classdef AOandDO_Synchronized_OO < handle
         function buildWaveforms(obj)
             % Build the AO and DO waveforms
 
+            % Can not build the waveforms if the user asks for a rate that is lower
+            % than samplerate/buffer size. 
+            minFreq = obj.sampleRate/obj.bufferSize;
+            if obj.aoFreq < minFreq
+                fprintf('Setting frequency to %f', minFreq)
+                obj.aoFreq = minFreq;
+            end
+
             %% Build AO waveform (default is 10 Hz sine, +/-2.5 V)
+            nCycles = obj.aoFreq/minFreq;
+
             aoSamplesPerPeriod = obj.sampleRate / obj.aoFreq;
-            obj.aoWaveform = obj.AOamplitude * sin(2*pi*(0:aoSamplesPerPeriod-1)'/aoSamplesPerPeriod);
+            obj.aoWaveform = obj.AOamplitude * sin(linspace(nCycles*pi, nCycles*-pi, obj.bufferSize));
+
 
 
             %% Build DO waveforms using packed port data
             doSamplesPerPeriod1 = obj.sampleRate / obj.doFreq1;
             doSamplesPerPeriod2 = obj.sampleRate / obj.doFreq2;
-            obj.doNumSamples = lcm(doSamplesPerPeriod1, doSamplesPerPeriod2);
 
-            t = (0:obj.doNumSamples-1)';
+            t = (0:obj.bufferSize-1)';
 
             sq1 = mod(floor(2 * obj.doFreq1 * t / obj.sampleRate), 2);   % The 10 Hz by default trace
             sq2 = mod(floor(2 * obj.doFreq2 * t / obj.sampleRate), 2);   % The 100 Hz by default trace
@@ -207,7 +235,7 @@ classdef AOandDO_Synchronized_OO < handle
                 obj.sampleRate, ...
                 SampleClockActiveEdge.Rising, ...
                 SampleQuantityMode.ContinuousSamples, ...
-                obj.doNumSamples);
+                obj.bufferSize);
 
 
             % * Allow sample regeneration
