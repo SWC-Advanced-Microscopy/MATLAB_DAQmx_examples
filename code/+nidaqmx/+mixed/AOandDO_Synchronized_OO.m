@@ -22,10 +22,17 @@ classdef AOandDO_Synchronized_OO < handle
     % % Change the frequency of the AO waveform
     % D.aoFreq=20;
     % D.buildWaveforms
-    % plot(D.aoWaveform) % The waveforms we will play out
+    % plot(D.aoWaveform) % The AO waveform we will play out
+    % D.plotWaveforms % Or use the method provided by the class to plot all waveforms
+    % D.writeData
+    %
+    % % Change the DO waveform
+    % D.doFreq2=200;
+    % D.buildWaveforms
     % D.writeData
     %
     %
+    % % Tidy up.
     %  clear D
     %
     %
@@ -49,8 +56,10 @@ classdef AOandDO_Synchronized_OO < handle
         doFreq2 = 100         % 100 Hz square wave on P0.1
 
         % Waveforms that are to be written to the DAQ
-        aoWaveform
-        doPortData
+        aoWaveform  % AO waveform
+        sqTrace1    % p0.0 DO trace
+        sqTrace2    % p0.1 DO trace
+        doPortData  % packed port data version of sqTrace1 and sqTrace2
 
         DAQdevice % string defining the name of the DAQ
 
@@ -165,14 +174,14 @@ classdef AOandDO_Synchronized_OO < handle
 
             t = (0:obj.bufferSize-1)';
 
-            sq1 = mod(floor(2 * obj.doFreq1 * t / obj.sampleRate), 2);   % The 10 Hz by default trace
-            sq2 = mod(floor(2 * obj.doFreq2 * t / obj.sampleRate), 2);   % The 100 Hz by default trace
+            obj.sqTrace1 = mod(floor(2 * obj.doFreq1 * t / obj.sampleRate), 2);   % The 10 Hz by default trace
+            obj.sqTrace2 = mod(floor(2 * obj.doFreq2 * t / obj.sampleRate), 2);   % The 100 Hz by default trace
 
             % Pack into port word:
             %   bit0 -> P0.0
             %   bit1 -> P0.1
-            obj.doPortData = uint32(sq1)*bitshift(1,0) + ...
-                         uint32(sq2)*bitshift(1,1);
+            obj.doPortData = uint32(obj.sqTrace1)*bitshift(1,0) + ...
+                         uint32(obj.sqTrace2)*bitshift(1,1);
 
         end % buildWaveforms
 
@@ -264,6 +273,19 @@ classdef AOandDO_Synchronized_OO < handle
             obj.doWriter.WriteMultiSamplePort(false, obj.doPortData);
         end % writeData
 
+
+        function plotWaveforms(obj)
+            figure
+            t = (0:length(obj.aoWaveform)-1)/(obj.sampleRate/1E3);
+            plot(t, obj.aoWaveform,'k-','LineWidth',2)
+            hold on
+            plot(t, obj.sqTrace2*5,'b-','LineWidth',2)
+            plot(t, 0.02+obj.sqTrace1*5,'r-','LineWidth',2)
+            hold off
+            xlabel('Time [ms]')
+            ylabel('Amplitude [V]')
+            grid on
+        end
 
     end % methods
 
